@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BeaconLibrary</string>
+    <string name="FILTER_BEACON_SIMULATION">BeaconSim</string>
+</resources>
