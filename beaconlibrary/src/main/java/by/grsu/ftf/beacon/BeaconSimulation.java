@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class BeaconSimulation extends Service{
@@ -15,7 +16,7 @@ public class BeaconSimulation extends Service{
 
     private int rssi = 0;
     private int id = 0;
-    private String[] Beacon=  new String[2];
+    private ArrayList<String> Beacon = new ArrayList<>();
 
     Intent intentSim = new Intent(FILTER_BEACON_SIMULATION);
     Random random = new Random();
@@ -33,13 +34,14 @@ public class BeaconSimulation extends Service{
         public void run() {
             rssi= random.nextInt(30)-80;
             id = random.nextInt(beaconConfig.getUUID().size());
-            Beacon[0]= beaconConfig.getUUID().get(id);
-            Beacon[1]=String.valueOf(rssi);
-            intentSim.putExtra(KEY_BEACON_SIMULATION,Beacon);
+            Beacon.add(0,beaconConfig.getUUID().get(id));
+            Beacon.add(1,String.valueOf(rssi));
+            intentSim.putStringArrayListExtra(KEY_BEACON_SIMULATION,Beacon);
             sendBroadcast(intentSim);
             handler.postDelayed(this,200);
         }
     };
+
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
