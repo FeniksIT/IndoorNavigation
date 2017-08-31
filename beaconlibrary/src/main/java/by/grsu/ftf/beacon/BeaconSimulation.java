@@ -1,6 +1,8 @@
 package by.grsu.ftf.beacon;
 
+
 import android.app.Service;
+import android.bluetooth.BluetoothClass;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
@@ -9,13 +11,11 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class BeaconSimulation extends Service{
+public class BeaconSimulation extends Service {
 
     private static final String FILTER_BEACON_SIMULATION="BeaconSim";
-    public final String KEY_BEACON_SIMULATION="BeaconUUID";
+    public static final String KEY_BEACON_SIMULATION="BeaconUUID";
 
-    private int rssi = 0;
-    private int id = 0;
     private ArrayList<String> Beacon = new ArrayList<>();
 
     Intent intentSim = new Intent(FILTER_BEACON_SIMULATION);
@@ -26,14 +26,14 @@ public class BeaconSimulation extends Service{
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         handler.postDelayed(runnable,100);
-        return super.onStartCommand(intent,flags,startId);
+        return START_STICKY;
     }
 
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            rssi= random.nextInt(30)-80;
-            id = random.nextInt(beaconConfig.getUUID().size());
+            int rssi = random.nextInt(30) - 80;
+            int id = random.nextInt(beaconConfig.getUUID().size());
             Beacon.add(0,beaconConfig.getUUID().get(id));
             Beacon.add(1,String.valueOf(rssi));
             intentSim.putStringArrayListExtra(KEY_BEACON_SIMULATION,Beacon);
@@ -41,6 +41,12 @@ public class BeaconSimulation extends Service{
             handler.postDelayed(this,200);
         }
     };
+
+    @Override
+    public void onDestroy() {
+        handler.removeMessages(0);
+        super.onDestroy();
+    }
 
     @Nullable
     @Override

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
+import by.grsu.ftf.activity.MainActivity;
 import by.grsu.ftf.beacon.*;
 
 public class BroadCast extends BroadcastReceiver {
@@ -16,11 +17,10 @@ public class BroadCast extends BroadcastReceiver {
 
     private ArrayList<String> Beacon = new ArrayList<>();
 
-    BeaconSimulation beaconSimulation = new BeaconSimulation();
-
     @Override
     public void onReceive(Context context, Intent intent) {
-        Beacon = intent.getStringArrayListExtra(beaconSimulation.KEY_BEACON_SIMULATION);
+        Beacon = intent.getStringArrayListExtra(BeaconSimulation.KEY_BEACON_SIMULATION);
+        MainActivity.mText.append(Beacon.get(0)+"\n");
         Log.d(TAG_BROAD_CAST, "Бикон UUID= "+Beacon.get(0)+ " RSSI= "+ Beacon.get(1));
     }
 }
