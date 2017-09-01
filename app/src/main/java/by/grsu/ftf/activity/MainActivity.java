@@ -8,7 +8,7 @@ import android.util.Log;
 import android.widget.TextView;
 
 import by.grsu.ftf.beacon.*;
-import by.grsu.ftf.bluetooth.*;
+import by.grsu.ftf.math.FilterDistance;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +25,6 @@ public class MainActivity extends AppCompatActivity {
     public void onClick(View view) {
         stopService(new Intent(this, BeaconSimulation.class));
         Log.d("BroadCast","работает кнопка");
-        BluetoothControl.Bluetoothcheck();
+        //BluetoothControl.Bluetoothcheck();
     }
-
 }
