@@ -22,7 +22,7 @@
         </activity>
         <receiver android:name="by.grsu.ftf.BroadCast">
             <intent-filter>
-                <action android:name="BeaconSim"/>
+                <action android:name="BeaconSearch"/>
             </intent-filter>
         </receiver>
     </application>

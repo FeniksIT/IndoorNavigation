@@ -13,14 +13,14 @@ public class BeaconConfig {
     private ArrayList<Integer> RssiOneMeter = new ArrayList<>();
 
     public BeaconConfig(){
-        UUID.add("id1");
-        UUID.add("id2");
-        UUID.add("id3");
-        UUID.add("id4");
-        name.add("Beacon 1");
-        name.add("Beacon 2");
-        name.add("Beacon 3");
-        name.add("Beacon 4");
+        UUID.add("111111111");
+        UUID.add("222222222");
+        UUID.add("333333333");
+        UUID.add("444444444");
+        name.add("id1");
+        name.add("id2");
+        name.add("id3");
+        name.add("id4");
         coordinates.add(new PointF(12,12));
         coordinates.add(new PointF(13,13));
         coordinates.add(new PointF(14,14));
@@ -31,7 +31,9 @@ public class BeaconConfig {
         RssiOneMeter.add(-51);
     }
 
-
+    public int getIndex(String namelist){
+        return name.indexOf(namelist);
+    }
 
     public void setUUID(ArrayList<String> UUID) {
         this.UUID = UUID;
@@ -53,8 +55,16 @@ public class BeaconConfig {
         return coordinates;
     }
 
+    public PointF getCoordinates(int index) {
+        return coordinates.get(index);
+    }
+
     public void setCoordinates(ArrayList<PointF> coordinates) {
         this.coordinates = coordinates;
+    }
+
+    public ArrayList<Integer> getRssiOneMeter() {
+        return RssiOneMeter;
     }
 }
 

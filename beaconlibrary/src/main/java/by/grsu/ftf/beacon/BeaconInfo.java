@@ -1,25 +1,39 @@
 package by.grsu.ftf.beacon;
 
+import android.graphics.PointF;
+
+import java.util.ArrayList;
+
 public class BeaconInfo {
 
     private String name;
-    private String address;
+    private int txPower;
     private int rssi;
     private double distance;
+    private PointF coordinates;
 
-    public BeaconInfo(String name, String address, int rssi, double distance) {
+    BeaconInfo(String name, int txPower, int rssi, double distance, PointF coordinates) {
         this.name = name;
-        this.address = address;
+        this.txPower = txPower;
         this.rssi = rssi;
         this.distance = distance;
+        this.coordinates = coordinates;
+    }
+
+    BeaconInfo(ArrayList<String> beacon){
+        this.name = beacon.get(0);
+        this.txPower = Integer.valueOf(beacon.get(1));
+        this.rssi = Integer.valueOf(beacon.get(2));
+        this.distance = Integer.valueOf(beacon.get(3));
+        //this.coordinates = new PointF(beacon.get(4));
     }
 
     public String getName() {
         return name;
     }
 
-    public String getAddress() {
-        return address;
+    public int getTxPower() {
+        return txPower;
     }
 
     public int getRssi() {
@@ -30,4 +44,7 @@ public class BeaconInfo {
         return distance;
     }
 
+    public PointF getCoordinates() {
+        return coordinates;
+    }
 }

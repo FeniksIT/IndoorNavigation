@@ -19,14 +19,12 @@ import android.widget.TextView;
 
 import by.grsu.ftf.beacon.*;
 import by.grsu.ftf.bluetooth.*;
-import by.grsu.ftf.math.*;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
     public static TextView mText;
-    BeaconScanner scanner = new BeaconScanner();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        //scanner.endScan();
+        stopService(new Intent(MainActivity.this, BluetoothService.class));
         super.onDestroy();
     }
 

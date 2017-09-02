@@ -5,23 +5,22 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import java.util.Random;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
 
-import by.grsu.ftf.beacon.BeaconConfig;
 import by.grsu.ftf.beacon.BeaconInfo;
 import by.grsu.ftf.beacon.BeaconScanner;
 
 public class BluetoothService extends Service {
 
-    public static String FILTER_BEACON_SIMULATION="BeaconSim";
-    public static String KEY_BEACON_SIMULATION="BeaconUUID";
+    public static String FILTER_BEACON_SERVICE="BeaconSearch";
+    public static String KEY_BEACON_SERVICE="BeaconUUID";
 
-    Intent intentSim = new Intent(FILTER_BEACON_SIMULATION);
+    Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
     BeaconScanner scanner = new BeaconScanner();
+    Handler handler = new Handler();
     private ArrayList<String> Beacon = new ArrayList<>();
 
     @Override
@@ -34,24 +33,26 @@ public class BluetoothService extends Service {
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            scanner.setListener(new BeaconScanner.OnBeaconDetectedListerner() {
+            scanner.setListener(new BeaconScanner.BeaconDetected() {
                 @Override
                 public void onBeaconDetected(BluetoothDevice device, BeaconInfo beaconInfo) {
                     //Log.d("BroadCast","&&&&&&&&&&   "+beaconInfo.getName()+"  &&&  "+beaconInfo.getDistance());
                     Beacon.add(0,beaconInfo.getName());
-                    Beacon.add(1,String.valueOf(beaconInfo.getDistance()));
-                    intentSim.putStringArrayListExtra(KEY_BEACON_SIMULATION,Beacon);
+                    Beacon.add(1,String.valueOf(beaconInfo.getTxPower()));
+                    Beacon.add(2,String.valueOf(beaconInfo.getRssi()));
+                    Beacon.add(3,String.valueOf(beaconInfo.getDistance()));
+                    Beacon.add(4,String.valueOf(beaconInfo.getCoordinates()));
+                    intentSim.putStringArrayListExtra(KEY_BEACON_SERVICE,Beacon);
                     sendBroadcast(intentSim);
                 }
             });
-            //Log.d("BroadCast","&&&&&&&&&&   "+beaconInfo.getName()+"  &&&  "+beaconInfo.getDistance());
-            //handler.postDelayed(this,200);
         }
     };
 
     @Override
     public void onDestroy() {
-        //handler.removeMessages(0);
+        scanner.stopScan();
+        handler.removeMessages(0);
         super.onDestroy();
     }
 

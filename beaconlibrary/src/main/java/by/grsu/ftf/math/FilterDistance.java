@@ -15,8 +15,6 @@ public class FilterDistance {
 
 
     public static void bic(String UUID,int RSSI){
-        BeaconConfig beaconConfig = new BeaconConfig();
-        ArrayList<String> Beacon = new ArrayList<>();
         if(!BeaconUUID.contains(UUID)) {
             BeaconUUID.add(UUID);
             BeaconRSSi.add(RSSI);
@@ -25,22 +23,18 @@ public class FilterDistance {
             if(BeaconRSSi.get(index)<RSSI) BeaconRSSi.set(index,RSSI);
         }
         if(BeaconUUID.size()==3){
-            Beacon=beaconConfig.getName();
+
             Log.d("BroadCast",String.valueOf(BeaconUUID.size()));
         }
     }
 
-    public double calculateAccuracy(int txPower, double rssi) {
-        if (rssi == 0) {
-            return -1.0; // if we cannot determine accuracy, return -1.
-        }
+    public double distance(int txPower, int rssi) {
         double ratio = rssi*1.0/txPower;
         if (ratio < 1.0) {
             return Math.pow(ratio,10);
         }
         else {
-            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
-            return accuracy;
+            return (0.89976)*Math.pow(ratio,7.7095) + 0.111;
         }
     }
 
