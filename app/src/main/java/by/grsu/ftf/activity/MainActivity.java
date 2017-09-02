@@ -1,6 +1,16 @@
 package by.grsu.ftf.activity;
 
+import android.Manifest;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.ScanResult;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Build;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,23 +18,71 @@ import android.util.Log;
 import android.widget.TextView;
 
 import by.grsu.ftf.beacon.*;
-import by.grsu.ftf.math.FilterDistance;
+import by.grsu.ftf.bluetooth.*;
+import by.grsu.ftf.math.*;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
+
     public static TextView mText;
+    BeaconScanner scanner = new BeaconScanner();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("This app needs location access");
+                builder.setMessage("Please grant location access so this app can detect peripherals.");
+                builder.setPositiveButton(android.R.string.ok, null);
+                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
+                        }
+                    }
+                });
+                builder.show();
+            }
+        }
         mText = (TextView)findViewById(R.id.Text12);
-        startService(new Intent(MainActivity.this, BeaconSimulation.class));
+        startService(new Intent(MainActivity.this, BluetoothService.class));
     }
 
+    @Override
+    protected void onDestroy() {
+        //scanner.endScan();
+        super.onDestroy();
+    }
+
+
     public void onClick(View view) {
-        stopService(new Intent(this, BeaconSimulation.class));
-        Log.d("BroadCast","работает кнопка");
-        //BluetoothControl.Bluetoothcheck();
+        Log.d("BroadCast", "работает кнопка");
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_COARSE_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    System.out.println("coarse location permission granted");
+                } else {
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    builder.setTitle("Functionality limited");
+                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
+                    builder.setPositiveButton(android.R.string.ok, null);
+                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                        }
+                    });
+                    builder.show();
+                }
+                return;
+            }
+        }
     }
 }

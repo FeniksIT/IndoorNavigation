@@ -12,8 +12,8 @@ import java.util.Random;
 
 public class BeaconSimulation extends Service {
 
-    private static final String FILTER_BEACON_SIMULATION="BeaconSim";
-    public static final String KEY_BEACON_SIMULATION="BeaconUUID";
+    public static String FILTER_BEACON_SIMULATION="BeaconSim";
+    public static String KEY_BEACON_SIMULATION="BeaconUUID";
 
     private ArrayList<String> Beacon = new ArrayList<>();
 

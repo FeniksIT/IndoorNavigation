@@ -30,14 +30,18 @@ public class FilterDistance {
         }
     }
 
-    private float dlina(int rssi_1,int rssi_d,float n){
-        float a;
-        float b;
-        float c;
-        a=(float)rssi_1;
-        b=(float)rssi_d;
-        c=(float)Math.pow(10,(a-b)/(10*n));
-        return c;
+    public double calculateAccuracy(int txPower, double rssi) {
+        if (rssi == 0) {
+            return -1.0; // if we cannot determine accuracy, return -1.
+        }
+        double ratio = rssi*1.0/txPower;
+        if (ratio < 1.0) {
+            return Math.pow(ratio,10);
+        }
+        else {
+            double accuracy =  (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+            return accuracy;
+        }
     }
 
     private PointF trilaterate(PointF a, PointF b, PointF c, float distA, float distB, float distC) {
