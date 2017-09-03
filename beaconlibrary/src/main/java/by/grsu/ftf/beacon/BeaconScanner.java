@@ -9,6 +9,15 @@ import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
 import android.graphics.PointF;
+import android.os.ParcelUuid;
+import android.util.Log;
+import android.util.SparseArray;
+
+import java.nio.ByteBuffer;
+import java.util.AbstractList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import by.grsu.ftf.math.FilterDistance;
 
@@ -34,13 +43,18 @@ public class BeaconScanner {
             BeaconConfig beaconConfig = new BeaconConfig();
             BluetoothDevice device = result.getDevice();
             ScanRecord scanRecord = result.getScanRecord();
-            int rssi = result.getRssi();
-            int txPower = scanRecord.getTxPowerLevel();
-            double dist = filterDistance.distance(txPower, rssi);
-            int index = beaconConfig.getIndex(device.getName());
-            PointF coord = beaconConfig.getCoordinates(index);
-            BeaconInfo info = new BeaconInfo(device.getName(), txPower, rssi, dist, coord);
-            if (listener != null) listener.onBeaconDetected(device, info);
+            if(beaconConfig.getName().contains(device.getName())) {
+                String UUID=convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
+                if(beaconConfig.getUUID().contains(UUID)) {
+                    int rssi = result.getRssi();
+                    int index = beaconConfig.getName().indexOf(device.getName());
+                    int txPower = scanRecord.getTxPowerLevel();
+                    float dist = filterDistance.distance(beaconConfig.getRssiOneMeter().get(index), rssi);
+                    PointF coord = beaconConfig.getCoordinates().get(index);
+                    BeaconInfo info = new BeaconInfo(device.getName(), UUID, txPower, rssi, dist, coord);
+                    if (listener != null) listener.onBeaconDetected(device, info);
+                }
+            }
         }
     };
 
@@ -50,8 +64,6 @@ public class BeaconScanner {
 
     public void startScan() {
         bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-     //   if (bluetoothLeScanner == null) {
-       // }
         ScanSettings settings = new ScanSettings.Builder()
                 .setReportDelay(0)
                 .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
@@ -62,5 +74,15 @@ public class BeaconScanner {
     public void stopScan() {
         bluetoothLeScanner.stopScan(scanCallback);
         bluetoothLeScanner = null;
+    }
+
+    private String convertASCIItoString(String  UUID){
+        UUID = UUID.substring(1,UUID.length()-1);
+        UUID = UUID.replaceAll("-","");
+        UUID = UUID.replaceAll("00","");
+        byte [] txtInByte = new byte [UUID.length() / 2];
+        int j = 0;
+        for (int i = 0; i < UUID.length(); i += 2) txtInByte[j++] = Byte.parseByte(UUID.substring(i, i + 2), 16);
+        return String.valueOf(new StringBuffer(new String(txtInByte)).reverse());
     }
 }

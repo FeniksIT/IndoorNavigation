@@ -6,39 +6,46 @@ import android.util.Log;
 
 import java.util.ArrayList;
 
-import by.grsu.ftf.beacon.BeaconConfig;
-
 public class FilterDistance {
 
     private static ArrayList<String> BeaconUUID = new ArrayList<>();
     private static ArrayList<Integer> BeaconRSSi = new ArrayList<>();
+    private static ArrayList<PointF> BeaconCoordinates = new ArrayList<>();
+    private static ArrayList<Float> BeaconDistance = new ArrayList<>();
 
 
-    public static void bic(String UUID,int RSSI){
+    public static PointF bic(String UUID,int RSSI, PointF coordinates, float distance){
         if(!BeaconUUID.contains(UUID)) {
             BeaconUUID.add(UUID);
             BeaconRSSi.add(RSSI);
+            BeaconCoordinates.add(coordinates);
+            BeaconDistance.add(distance);
         }else{
             int index=BeaconUUID.indexOf(UUID);
-            if(BeaconRSSi.get(index)<RSSI) BeaconRSSi.set(index,RSSI);
+            if(BeaconRSSi.get(index)<RSSI){
+                BeaconRSSi.set(index,RSSI);
+                BeaconDistance.set(index,distance);
+            }
         }
         if(BeaconUUID.size()==3){
-
-            Log.d("BroadCast",String.valueOf(BeaconUUID.size()));
+            return trilaterate(BeaconCoordinates.get(0),BeaconCoordinates.get(1),BeaconCoordinates.get(2),BeaconDistance.get(0),BeaconDistance.get(1),BeaconDistance.get(2));
+            //Log.d("BroadCast",String.valueOf(BeaconUUID.size()));
+        }else{
+            return null;
         }
     }
 
-    public double distance(int txPower, int rssi) {
+    public float distance(int txPower, int rssi) {
         double ratio = rssi*1.0/txPower;
         if (ratio < 1.0) {
-            return Math.pow(ratio,10);
+            return (float)(Math.pow(ratio,10));
         }
         else {
-            return (0.89976)*Math.pow(ratio,7.7095) + 0.111;
+            return (float)((0.89976)*Math.pow(ratio,7.7095) + 0.111);
         }
     }
 
-    private PointF trilaterate(PointF a, PointF b, PointF c, float distA, float distB, float distC) {
+    private static PointF trilaterate(PointF a, PointF b, PointF c, float distA, float distB, float distC) {
         float P1[] = { a.x, a.y, 0 };
         float P2[] = { b.x, b.y, 0 };
         float P3[] = { c.x, c.y, 0 };

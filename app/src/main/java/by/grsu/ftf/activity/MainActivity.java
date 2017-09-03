@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        stopService(new Intent(MainActivity.this, BluetoothService.class));
+        //stopService(new Intent(MainActivity.this, BluetoothService.class));
         super.onDestroy();
     }
 

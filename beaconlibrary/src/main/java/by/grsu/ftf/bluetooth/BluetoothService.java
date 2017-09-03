@@ -38,10 +38,12 @@ public class BluetoothService extends Service {
                 public void onBeaconDetected(BluetoothDevice device, BeaconInfo beaconInfo) {
                     //Log.d("BroadCast","&&&&&&&&&&   "+beaconInfo.getName()+"  &&&  "+beaconInfo.getDistance());
                     Beacon.add(0,beaconInfo.getName());
-                    Beacon.add(1,String.valueOf(beaconInfo.getTxPower()));
-                    Beacon.add(2,String.valueOf(beaconInfo.getRssi()));
-                    Beacon.add(3,String.valueOf(beaconInfo.getDistance()));
-                    Beacon.add(4,String.valueOf(beaconInfo.getCoordinates()));
+                    Beacon.add(1,beaconInfo.getUUID());
+                    Beacon.add(2,String.valueOf(beaconInfo.getTxPower()));
+                    Beacon.add(3,String.valueOf(beaconInfo.getRssi()));
+                    Beacon.add(4,String.valueOf(beaconInfo.getDistance()));
+                    Beacon.add(5,String.valueOf(beaconInfo.getCoordinates().x));
+                    Beacon.add(6,String.valueOf(beaconInfo.getCoordinates().y));
                     intentSim.putStringArrayListExtra(KEY_BEACON_SERVICE,Beacon);
                     sendBroadcast(intentSim);
                 }
