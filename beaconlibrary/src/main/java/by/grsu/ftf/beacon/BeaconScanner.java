@@ -1,6 +1,6 @@
 package by.grsu.ftf.beacon;
 
-import android.annotation.TargetApi;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -9,29 +9,19 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
-import android.content.Intent;
 import android.graphics.PointF;
-import android.os.ParcelUuid;
+import android.os.Build;
 import android.util.Log;
-import android.util.SparseArray;
-
-import java.nio.ByteBuffer;
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
 
 import by.grsu.ftf.math.FilterDistance;
 
-@TargetApi(21)
 public class BeaconScanner extends Activity {
-
-    private final static int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;
     private BeaconDetected listener;
     private FilterDistance filterDistance= new FilterDistance();
+    BeaconConfig beaconConfig = new BeaconConfig();
 
     public interface BeaconDetected {
         void onBeaconDetected(BluetoothDevice device, BeaconInfo beaconInfo);
@@ -41,10 +31,11 @@ public class BeaconScanner extends Activity {
         this.listener = listener;
     }
 
+    //SDK>21
+    @SuppressLint("NewApi")
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            BeaconConfig beaconConfig = new BeaconConfig();
             BluetoothDevice device = result.getDevice();
             ScanRecord scanRecord = result.getScanRecord();
             if(beaconConfig.getName().contains(device.getName())) {
@@ -58,9 +49,30 @@ public class BeaconScanner extends Activity {
                     PointF coordinates = beaconConfig.getCoordinates().get(index);
                     BeaconInfo info = new BeaconInfo(name, UUID, txPower, rssi, distance, coordinates);
                     if (listener != null) listener.onBeaconDetected(device, info);
-                    //if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) startScan();
                 }
             }
+        }
+    };
+
+    //SDK<21
+    private BluetoothAdapter.LeScanCallback LeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
+            new Runnable() {
+                public void run() {
+                    // Требуется проверка на android 4.4
+                    if(beaconConfig.getName().contains(device.getName())) {
+                        String UUID=convertASCIItoString(device.getUuids().toString());
+                        if(beaconConfig.getUUID().contains(UUID)) {
+                            String name = device.getName();
+                            int index = beaconConfig.getName().indexOf(name);
+                            float distance = filterDistance.distance(beaconConfig.getRssiOneMeter().get(index), rssi);
+                            PointF coordinates = beaconConfig.getCoordinates().get(index);
+                            BeaconInfo info = new BeaconInfo(name, UUID, 0, rssi, distance, coordinates);
+                            if (listener != null) listener.onBeaconDetected(device, info);
+                        }
+                    }
+                }
+            };
         }
     };
 
@@ -74,18 +86,26 @@ public class BeaconScanner extends Activity {
             //startActivityForResult(enableIntent,REQUEST_ENABLE_BT);
             bluetoothAdapter.enable();
         }
+        if(Build.VERSION.SDK_INT < 21){
+            bluetoothAdapter.startLeScan(LeScanCallback);
+        }else {
             bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
             ScanSettings settings = new ScanSettings.Builder()
                     .setReportDelay(0)
                     .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
                     .build();
             bluetoothLeScanner.startScan(null, settings, scanCallback);
+        }
 
     }
 
     public void stopScan() {
-        bluetoothLeScanner.stopScan(scanCallback);
-        bluetoothLeScanner = null;
+        if(Build.VERSION.SDK_INT < 21) {
+            bluetoothAdapter.stopLeScan(LeScanCallback);
+        }else{
+            bluetoothLeScanner.stopScan(scanCallback);
+            bluetoothLeScanner = null;
+        }
     }
 
     private String convertASCIItoString(String  UUID){
