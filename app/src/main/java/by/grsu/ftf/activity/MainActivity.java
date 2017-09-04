@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
 
-    public static TextView mText;
+    public static TextView BeaconTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                 builder.show();
             }
         }
-        mText = (TextView)findViewById(R.id.Text12);
+        BeaconTextView = (TextView)findViewById(R.id.BeaconTextView);
         startService(new Intent(MainActivity.this, BluetoothService.class));
     }
 
@@ -57,10 +57,14 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-
     public void onClick(View view) {
         Log.d("BroadCast", "работает кнопка");
     }
+
+    public static void setBeaconTextView(String beaconTextView) {
+        BeaconTextView.append(beaconTextView+"\n");
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {

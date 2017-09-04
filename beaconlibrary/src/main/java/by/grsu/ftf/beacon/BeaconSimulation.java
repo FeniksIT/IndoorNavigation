@@ -14,12 +14,13 @@ import by.grsu.ftf.math.FilterDistance;
 
 public class BeaconSimulation extends Service {
 
-    public static String FILTER_BEACON_SIMULATION="BeaconSim";
-    public static String KEY_BEACON_SIMULATION="BeaconUUID";
+
+    public static String FILTER_BEACON_SERVICE="BeaconSearch";
+    public static String KEY_BEACON_SERVICE="BeaconUUID";
 
     private ArrayList<String> Beacon = new ArrayList<>();
 
-    Intent intentSim = new Intent(FILTER_BEACON_SIMULATION);
+    Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
     Random random = new Random();
     Handler handler = new Handler();
     BeaconConfig beaconConfig = new BeaconConfig();
@@ -43,7 +44,7 @@ public class BeaconSimulation extends Service {
             Beacon.add(4,String.valueOf(filterDistance.distance(beaconConfig.getRssiOneMeter().get(id), rssi)));
             Beacon.add(5,String.valueOf(beaconConfig.getCoordinates().get(id).x));
             Beacon.add(6,String.valueOf(beaconConfig.getCoordinates().get(id).y));
-            intentSim.putStringArrayListExtra(KEY_BEACON_SIMULATION,Beacon);
+            intentSim.putStringArrayListExtra(KEY_BEACON_SERVICE,Beacon);
             sendBroadcast(intentSim);
             handler.postDelayed(this,200);
         }

@@ -2,7 +2,6 @@ package by.grsu.ftf.math;
 
 
 import android.graphics.PointF;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -28,8 +27,12 @@ public class FilterDistance {
             }
         }
         if(BeaconUUID.size()==3){
-            return trilaterate(BeaconCoordinates.get(0),BeaconCoordinates.get(1),BeaconCoordinates.get(2),BeaconDistance.get(0),BeaconDistance.get(1),BeaconDistance.get(2));
-            //Log.d("BroadCast",String.valueOf(BeaconUUID.size()));
+            PointF coord = trilaterate(BeaconCoordinates.get(0),BeaconCoordinates.get(1),BeaconCoordinates.get(2),BeaconDistance.get(0),BeaconDistance.get(1),BeaconDistance.get(2));
+            BeaconUUID.clear();
+            BeaconRSSi.clear();
+            BeaconDistance.clear();
+            BeaconCoordinates.clear();
+            return coord;
         }else{
             return null;
         }

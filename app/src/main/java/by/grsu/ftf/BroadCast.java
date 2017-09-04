@@ -4,6 +4,7 @@ package by.grsu.ftf;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PointF;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -23,9 +24,9 @@ public class BroadCast extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Beacon = intent.getStringArrayListExtra(BluetoothService.KEY_BEACON_SERVICE);
         BeaconInfo beaconInfo = new BeaconInfo(Beacon);
-        MainActivity.mText.append(beaconInfo.getName()+"\n");
-        //Log.d(TAG_BROAD_CAST, "Бикон UUID= "+ Beacon.get(0)+ " RSSI= "+ Beacon.get(3));
-        Log.d(TAG_BROAD_CAST, "Бикон UUID= "+ beaconInfo.getUUID()+ " RSSI= "+ beaconInfo.getDistance());
-        //FilterDistance.bic(beaconInfo.getName(),beaconInfo.getRssi(),beaconInfo.getCoordinates(),beaconInfo.getDistance());
+        MainActivity.setBeaconTextView("Beacon Name: "+beaconInfo.getName()+" RSSI: "+beaconInfo.getRssi()+" UUID: "+beaconInfo.getUUID()+" Distance:"+beaconInfo.getDistance()+" Coordinate: "+beaconInfo.getCoordinates()+" TxPower: "+beaconInfo.getTxPower());
+        //Log.d(TAG_BROAD_CAST, "Бикон UUID= "+ beaconInfo.getUUID()+ " RSSI= "+ beaconInfo.getRssi());
+        PointF coordinates = FilterDistance.bic(beaconInfo.getName(),beaconInfo.getRssi(),beaconInfo.getCoordinates(),beaconInfo.getDistance());
+        if(coordinates!=null)Log.d(TAG_BROAD_CAST, "Координаты человека "+coordinates);
     }
 }

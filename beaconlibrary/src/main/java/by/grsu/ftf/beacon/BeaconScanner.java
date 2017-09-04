@@ -1,6 +1,7 @@
 package by.grsu.ftf.beacon;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -8,6 +9,7 @@ import android.bluetooth.le.ScanCallback;
 import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
+import android.content.Intent;
 import android.graphics.PointF;
 import android.os.ParcelUuid;
 import android.util.Log;
@@ -22,7 +24,9 @@ import java.util.UUID;
 import by.grsu.ftf.math.FilterDistance;
 
 @TargetApi(21)
-public class BeaconScanner {
+public class BeaconScanner extends Activity {
+
+    private final static int REQUEST_ENABLE_BT = 1;
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;
@@ -46,13 +50,15 @@ public class BeaconScanner {
             if(beaconConfig.getName().contains(device.getName())) {
                 String UUID=convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
                 if(beaconConfig.getUUID().contains(UUID)) {
+                    String name = device.getName();
                     int rssi = result.getRssi();
-                    int index = beaconConfig.getName().indexOf(device.getName());
+                    int index = beaconConfig.getName().indexOf(name);
                     int txPower = scanRecord.getTxPowerLevel();
-                    float dist = filterDistance.distance(beaconConfig.getRssiOneMeter().get(index), rssi);
-                    PointF coord = beaconConfig.getCoordinates().get(index);
-                    BeaconInfo info = new BeaconInfo(device.getName(), UUID, txPower, rssi, dist, coord);
+                    float distance = filterDistance.distance(beaconConfig.getRssiOneMeter().get(index), rssi);
+                    PointF coordinates = beaconConfig.getCoordinates().get(index);
+                    BeaconInfo info = new BeaconInfo(name, UUID, txPower, rssi, distance, coordinates);
                     if (listener != null) listener.onBeaconDetected(device, info);
+                    //if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) startScan();
                 }
             }
         }
@@ -63,12 +69,18 @@ public class BeaconScanner {
     }
 
     public void startScan() {
-        bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-        ScanSettings settings = new ScanSettings.Builder()
-                .setReportDelay(0)
-                .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                .build();
-        bluetoothLeScanner.startScan(null, settings, scanCallback);
+        if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
+            //Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            //startActivityForResult(enableIntent,REQUEST_ENABLE_BT);
+            bluetoothAdapter.enable();
+        }
+            bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+            ScanSettings settings = new ScanSettings.Builder()
+                    .setReportDelay(0)
+                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                    .build();
+            bluetoothLeScanner.startScan(null, settings, scanCallback);
+
     }
 
     public void stopScan() {
