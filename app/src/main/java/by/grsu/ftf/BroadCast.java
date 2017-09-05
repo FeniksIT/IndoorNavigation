@@ -25,8 +25,8 @@ public class BroadCast extends BroadcastReceiver {
         Beacon = intent.getStringArrayListExtra(BluetoothService.KEY_BEACON_SERVICE);
         BeaconInfo beaconInfo = new BeaconInfo(Beacon);
         MainActivity.setBeaconTextView("Beacon Name: "+beaconInfo.getName()+" RSSI: "+beaconInfo.getRssi()+" UUID: "+beaconInfo.getUUID()+" Distance:"+beaconInfo.getDistance()+" Coordinate: "+beaconInfo.getCoordinates()+" TxPower: "+beaconInfo.getTxPower());
-        //Log.d(TAG_BROAD_CAST, "Бикон UUID= "+ beaconInfo.getUUID()+ " RSSI= "+ beaconInfo.getRssi());
+        Log.d(TAG_BROAD_CAST, "Бикон UUID= "+ beaconInfo.getUUID()+ " RSSI= "+ beaconInfo.getRssi());
         PointF coordinates = FilterDistance.bic(beaconInfo.getName(),beaconInfo.getRssi(),beaconInfo.getCoordinates(),beaconInfo.getDistance());
-        if(coordinates!=null)Log.d(TAG_BROAD_CAST, "Координаты человека "+coordinates);
+        if(coordinates!=null)MainActivity.setBeaconTextView("Координаты "+ coordinates);
     }
 }
