@@ -80,7 +80,7 @@ public class BeaconScanner extends Activity {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
-    public void startScan() {
+    public void startScan(){
         if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
             //Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             //startActivityForResult(enableIntent,REQUEST_ENABLE_BT);

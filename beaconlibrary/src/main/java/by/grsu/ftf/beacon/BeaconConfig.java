@@ -21,10 +21,10 @@ public class BeaconConfig {
         name.add("id2");
         name.add("id3");
         name.add("id4");
-        coordinates.add(new PointF(12,12));
-        coordinates.add(new PointF(13,13));
-        coordinates.add(new PointF(14,14));
-        coordinates.add(new PointF(15,15));
+        coordinates.add(new PointF(12,2));
+        coordinates.add(new PointF(13,3));
+        coordinates.add(new PointF(14,4));
+        coordinates.add(new PointF(15,5));
         rssiOneMeter.add(-35);
         rssiOneMeter.add(-46);
         rssiOneMeter.add(-45);

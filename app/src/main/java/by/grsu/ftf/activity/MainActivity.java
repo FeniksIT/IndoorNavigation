@@ -48,7 +48,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         BeaconTextView = (TextView)findViewById(R.id.BeaconTextView);
-        startService(new Intent(MainActivity.this, BluetoothService.class));
+        startService(new Intent(MainActivity.this, BeaconSimulation.class)); //Эмулятор биконов
+        //startService(new Intent(MainActivity.this, BluetoothService.class)); // Поиск биконов
     }
 
     @Override
