@@ -16,8 +16,8 @@ public class BeaconSimulation extends Service {
     public static String FILTER_BEACON_SERVICE="BeaconSearch";
     public static String KEY_BEACON_SERVICE="BeaconUUID";
 
-    Random random = new Random();
-    Handler handler = new Handler();
+    private Random random = new Random();
+    private Handler handler = new Handler();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -31,11 +31,9 @@ public class BeaconSimulation extends Service {
             int rssi = random.nextInt(30) - 80;
             int id = random.nextInt(3)+1;
             Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
-            ArrayList<String> Beacon = new ArrayList<>();
-            Beacon.add("id"+id);
-            Beacon.add("Beacon "+id);
-            Beacon.add(String.valueOf(rssi));
-            intentSim.putStringArrayListExtra(KEY_BEACON_SERVICE,Beacon);
+            ArrayList<BeaconInfo> Beacon = new ArrayList<>();
+            Beacon.add(new BeaconInfo("id"+id,"Beacon "+id,rssi));
+            intentSim.putParcelableArrayListExtra(KEY_BEACON_SERVICE,Beacon);
             sendBroadcast(intentSim);
             handler.postDelayed(this,200);
         }

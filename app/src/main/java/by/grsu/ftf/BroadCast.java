@@ -20,13 +20,12 @@ public class BroadCast extends BroadcastReceiver {
     public static final String TAG_BROAD_CAST="BroadCast";
 
     private FilterDistance filterDistance = new FilterDistance();
-    private ArrayList<String> beacon = new ArrayList<>();
 
     @Override
     public void onReceive(Context context, Intent intent) {
         BeaconConfig beaconConfig = new BeaconConfig();
-        beacon = intent.getStringArrayListExtra(BluetoothService.KEY_BEACON_SERVICE);
-        BeaconInfo beaconInfo = new BeaconInfo(beacon);
+        ArrayList<BeaconInfo> beacon = intent.getParcelableArrayListExtra(BluetoothService.KEY_BEACON_SERVICE);
+        BeaconInfo beaconInfo = beacon.get(0);
         MainActivity.setBeaconTextView("Beacon Name: "+beaconInfo.getName()+" RSSI: "+beaconInfo.getRssi()+" UUID: "+beaconInfo.getUUID());
         Log.d(TAG_BROAD_CAST, "Бикон UUID= "+ beaconInfo.getUUID()+ " RSSI= "+ beaconInfo.getRssi());
         int index = beaconConfig.getName().indexOf(beaconInfo.getName());

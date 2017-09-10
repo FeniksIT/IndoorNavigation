@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
@@ -36,11 +37,9 @@ public class BluetoothService extends Service {
                 public void onBeaconDetected(BluetoothDevice device, BeaconInfo beaconInfo) {
                     //Log.d("BroadCast","&&&&&&&&&&   "+beaconInfo.getName()+"  &&&  "+beaconInfo.getRssi());
                     Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
-                    ArrayList<String> Beacon = new ArrayList<>();
-                    Beacon.add(beaconInfo.getName());
-                    Beacon.add(beaconInfo.getUUID());
-                    Beacon.add(String.valueOf(beaconInfo.getRssi()));
-                    intentSim.putStringArrayListExtra(KEY_BEACON_SERVICE,Beacon);
+                    ArrayList<BeaconInfo> beacon = new ArrayList<>();
+                    beacon.add(0,new BeaconInfo(beaconInfo.getName(),beaconInfo.getUUID(),beaconInfo.getRssi()));
+                    intentSim.putParcelableArrayListExtra(KEY_BEACON_SERVICE,beacon);
                     sendBroadcast(intentSim);
                 }
             });
