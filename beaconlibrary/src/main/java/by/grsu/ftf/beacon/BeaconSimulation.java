@@ -10,21 +10,14 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Random;
 
-import by.grsu.ftf.math.FilterDistance;
-
 public class BeaconSimulation extends Service {
 
 
     public static String FILTER_BEACON_SERVICE="BeaconSearch";
     public static String KEY_BEACON_SERVICE="BeaconUUID";
 
-    private ArrayList<String> Beacon = new ArrayList<>();
-
-    Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
     Random random = new Random();
     Handler handler = new Handler();
-    BeaconConfig beaconConfig = new BeaconConfig();
-    FilterDistance filterDistance= new FilterDistance();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -36,14 +29,12 @@ public class BeaconSimulation extends Service {
         @Override
         public void run() {
             int rssi = random.nextInt(30) - 80;
-            int id = random.nextInt(beaconConfig.getUUID().size());
-            Beacon.add(0,beaconConfig.getName().get(id));
-            Beacon.add(1,beaconConfig.getUUID().get(id));
-            Beacon.add(2,"-2");
-            Beacon.add(3,String.valueOf(rssi));
-            Beacon.add(4,String.valueOf(filterDistance.distance(beaconConfig.getRssiOneMeter().get(id), rssi)));
-            Beacon.add(5,String.valueOf(beaconConfig.getCoordinates().get(id).x));
-            Beacon.add(6,String.valueOf(beaconConfig.getCoordinates().get(id).y));
+            int id = random.nextInt(3)+1;
+            Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
+            ArrayList<String> Beacon = new ArrayList<>();
+            Beacon.add("id"+id);
+            Beacon.add("Beacon "+id);
+            Beacon.add(String.valueOf(rssi));
             intentSim.putStringArrayListExtra(KEY_BEACON_SERVICE,Beacon);
             sendBroadcast(intentSim);
             handler.postDelayed(this,200);

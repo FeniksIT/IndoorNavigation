@@ -1,4 +1,4 @@
-package by.grsu.ftf.math;
+package by.grsu.ftf.maths;
 
 
 import android.graphics.PointF;

@@ -12,21 +12,27 @@ import java.util.ArrayList;
 import by.grsu.ftf.activity.MainActivity;
 import by.grsu.ftf.beacon.*;
 import by.grsu.ftf.bluetooth.*;
-import by.grsu.ftf.math.FilterDistance;
+import by.grsu.ftf.maths.FilterDistance;
+import by.grsu.ftf.server.BeaconConfig;
 
 public class BroadCast extends BroadcastReceiver {
 
     public static final String TAG_BROAD_CAST="BroadCast";
 
-    private ArrayList<String> Beacon = new ArrayList<>();
+    private FilterDistance filterDistance = new FilterDistance();
+    private ArrayList<String> beacon = new ArrayList<>();
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Beacon = intent.getStringArrayListExtra(BluetoothService.KEY_BEACON_SERVICE);
-        BeaconInfo beaconInfo = new BeaconInfo(Beacon);
-        MainActivity.setBeaconTextView("Beacon Name: "+beaconInfo.getName()+" RSSI: "+beaconInfo.getRssi()+" UUID: "+beaconInfo.getUUID()+" Distance:"+beaconInfo.getDistance()+" Coordinate: "+beaconInfo.getCoordinates()+" TxPower: "+beaconInfo.getTxPower());
+        BeaconConfig beaconConfig = new BeaconConfig();
+        beacon = intent.getStringArrayListExtra(BluetoothService.KEY_BEACON_SERVICE);
+        BeaconInfo beaconInfo = new BeaconInfo(beacon);
+        MainActivity.setBeaconTextView("Beacon Name: "+beaconInfo.getName()+" RSSI: "+beaconInfo.getRssi()+" UUID: "+beaconInfo.getUUID());
         Log.d(TAG_BROAD_CAST, "Бикон UUID= "+ beaconInfo.getUUID()+ " RSSI= "+ beaconInfo.getRssi());
-        PointF coordinates = FilterDistance.bic(beaconInfo.getName(),beaconInfo.getRssi(),beaconInfo.getCoordinates(),beaconInfo.getDistance());
-        if(coordinates!=null)MainActivity.setBeaconTextView("Координаты "+ coordinates);
+        int index = beaconConfig.getName().indexOf(beaconInfo.getName());
+        PointF coordinatesBeacon = beaconConfig.getCoordinates().get(index);
+        float distanceBeacon = filterDistance.distance(beaconConfig.getRssiOneMeter().get(index),beaconInfo.getRssi());
+        PointF coordinatesUser = FilterDistance.bic(beaconInfo.getName(),beaconInfo.getRssi(),coordinatesBeacon,distanceBeacon);
+        if(coordinatesUser!=null)MainActivity.setBeaconTextView("Координаты "+ coordinatesUser);
     }
 }

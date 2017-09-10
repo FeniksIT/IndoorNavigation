@@ -1,4 +1,4 @@
-package by.grsu.ftf.beacon;
+package by.grsu.ftf.server;
 
 
 import android.graphics.PointF;

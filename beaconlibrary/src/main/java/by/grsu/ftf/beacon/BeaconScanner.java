@@ -6,22 +6,17 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
 import android.bluetooth.le.ScanCallback;
-import android.bluetooth.le.ScanRecord;
 import android.bluetooth.le.ScanResult;
 import android.bluetooth.le.ScanSettings;
-import android.graphics.PointF;
 import android.os.Build;
 import android.util.Log;
 
-import by.grsu.ftf.math.FilterDistance;
 
 public class BeaconScanner extends Activity {
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;
     private BeaconDetected listener;
-    private FilterDistance filterDistance= new FilterDistance();
-    BeaconConfig beaconConfig = new BeaconConfig();
 
     public interface BeaconDetected {
         void onBeaconDetected(BluetoothDevice device, BeaconInfo beaconInfo);
@@ -37,19 +32,13 @@ public class BeaconScanner extends Activity {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
             BluetoothDevice device = result.getDevice();
-            ScanRecord scanRecord = result.getScanRecord();
-            if(beaconConfig.getName().contains(device.getName())) {
+            if(device.getName()!=null) {
+                Log.d("BroadCast","&&&&&&&&&&   "+result.getRssi());
                 String UUID=convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
-                if(beaconConfig.getUUID().contains(UUID)) {
-                    String name = device.getName();
-                    int rssi = result.getRssi();
-                    int index = beaconConfig.getName().indexOf(name);
-                    int txPower = scanRecord.getTxPowerLevel();
-                    float distance = filterDistance.distance(beaconConfig.getRssiOneMeter().get(index), rssi);
-                    PointF coordinates = beaconConfig.getCoordinates().get(index);
-                    BeaconInfo info = new BeaconInfo(name, UUID, txPower, rssi, distance, coordinates);
-                    if (listener != null) listener.onBeaconDetected(device, info);
-                }
+                String name = device.getName();
+                int rssi = result.getRssi();
+                BeaconInfo info = new BeaconInfo(name, UUID, rssi);
+                if (listener != null) listener.onBeaconDetected(device, info);
             }
         }
     };
@@ -60,16 +49,11 @@ public class BeaconScanner extends Activity {
             new Runnable() {
                 public void run() {
                     // Требуется проверка на android 4.4
-                    if(beaconConfig.getName().contains(device.getName())) {
+                    if(device.getName()!=null) {
                         String UUID=convertASCIItoString(device.getUuids().toString());
-                        if(beaconConfig.getUUID().contains(UUID)) {
-                            String name = device.getName();
-                            int index = beaconConfig.getName().indexOf(name);
-                            float distance = filterDistance.distance(beaconConfig.getRssiOneMeter().get(index), rssi);
-                            PointF coordinates = beaconConfig.getCoordinates().get(index);
-                            BeaconInfo info = new BeaconInfo(name, UUID, 0, rssi, distance, coordinates);
-                            if (listener != null) listener.onBeaconDetected(device, info);
-                        }
+                        String name = device.getName();
+                        BeaconInfo info = new BeaconInfo(name, UUID, rssi);
+                        if (listener != null) listener.onBeaconDetected(device, info);
                     }
                 }
             };

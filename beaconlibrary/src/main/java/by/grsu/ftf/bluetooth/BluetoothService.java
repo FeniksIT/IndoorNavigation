@@ -18,10 +18,8 @@ public class BluetoothService extends Service {
     public static String FILTER_BEACON_SERVICE="BeaconSearch";
     public static String KEY_BEACON_SERVICE="BeaconUUID";
 
-    Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
-    BeaconScanner scanner = new BeaconScanner();
-    Handler handler = new Handler();
-    private ArrayList<String> Beacon = new ArrayList<>();
+    private BeaconScanner scanner = new BeaconScanner();
+    private Handler handler = new Handler();
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -36,14 +34,12 @@ public class BluetoothService extends Service {
             scanner.setListener(new BeaconScanner.BeaconDetected() {
                 @Override
                 public void onBeaconDetected(BluetoothDevice device, BeaconInfo beaconInfo) {
-                    //Log.d("BroadCast","&&&&&&&&&&   "+beaconInfo.getName()+"  &&&  "+beaconInfo.getDistance());
-                    Beacon.add(0,beaconInfo.getName());
-                    Beacon.add(1,beaconInfo.getUUID());
-                    Beacon.add(2,String.valueOf(beaconInfo.getTxPower()));
-                    Beacon.add(3,String.valueOf(beaconInfo.getRssi()));
-                    Beacon.add(4,String.valueOf(beaconInfo.getDistance()));
-                    Beacon.add(5,String.valueOf(beaconInfo.getCoordinates().x));
-                    Beacon.add(6,String.valueOf(beaconInfo.getCoordinates().y));
+                    //Log.d("BroadCast","&&&&&&&&&&   "+beaconInfo.getName()+"  &&&  "+beaconInfo.getRssi());
+                    Intent intentSim = new Intent(FILTER_BEACON_SERVICE);
+                    ArrayList<String> Beacon = new ArrayList<>();
+                    Beacon.add(beaconInfo.getName());
+                    Beacon.add(beaconInfo.getUUID());
+                    Beacon.add(String.valueOf(beaconInfo.getRssi()));
                     intentSim.putStringArrayListExtra(KEY_BEACON_SERVICE,Beacon);
                     sendBroadcast(intentSim);
                 }
