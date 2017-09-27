@@ -41,7 +41,7 @@ public class BeaconSimulation extends Service {
 
     @Override
     public void onDestroy() {
-        handler.removeMessages(0);
+        handler.removeCallbacks(runnable);
         super.onDestroy();
     }
 

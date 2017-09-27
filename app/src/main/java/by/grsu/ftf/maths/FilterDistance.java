@@ -4,13 +4,14 @@ package by.grsu.ftf.maths;
 import android.graphics.PointF;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class FilterDistance {
 
-    private static ArrayList<String> BeaconUUID = new ArrayList<>();
-    private static ArrayList<Integer> BeaconRSSi = new ArrayList<>();
-    private static ArrayList<PointF> BeaconCoordinates = new ArrayList<>();
-    private static ArrayList<Float> BeaconDistance = new ArrayList<>();
+    private static List<String> BeaconUUID = new ArrayList<>();
+    private static List<Integer> BeaconRSSi = new ArrayList<>();
+    private static List<PointF> BeaconCoordinates = new ArrayList<>();
+    private static List<Float> BeaconDistance = new ArrayList<>();
 
 
     public static PointF bic(String UUID,int RSSI, PointF coordinates, float distance){

@@ -4,13 +4,14 @@ package by.grsu.ftf.server;
 import android.graphics.PointF;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class BeaconConfig {
 
-    private ArrayList<String> UUID = new ArrayList<>();
-    private ArrayList<String> name = new ArrayList<>();
-    private ArrayList<PointF> coordinates = new ArrayList<>();
-    private ArrayList<Integer> rssiOneMeter = new ArrayList<>();
+    private List<String> UUID = new ArrayList<>();
+    private List<String> name = new ArrayList<>();
+    private List<PointF> coordinates = new ArrayList<>();
+    private List<Integer> rssiOneMeter = new ArrayList<>();
 
     public BeaconConfig(){
         UUID.add("Beacon 1");
@@ -31,19 +32,19 @@ public class BeaconConfig {
         rssiOneMeter.add(-51);
     }
 
-    public ArrayList<PointF> getCoordinates() {
+    public List<PointF> getCoordinates() {
         return coordinates;
     }
 
-    public ArrayList<Integer> getRssiOneMeter() {
+    public List<Integer> getRssiOneMeter() {
         return rssiOneMeter;
     }
 
-    public ArrayList<String> getUUID() {
+    public List<String> getUUID() {
         return UUID;
     }
 
-    public ArrayList<String> getName() {
+    public List<String> getName() {
         return name;
     }
 

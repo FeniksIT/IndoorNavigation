@@ -1,7 +1,6 @@
 package by.grsu.ftf.beacon;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.le.BluetoothLeScanner;
@@ -12,7 +11,7 @@ import android.os.Build;
 import android.util.Log;
 
 
-public class BeaconScanner extends Activity {
+public class BeaconScanner {
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;
@@ -31,14 +30,18 @@ public class BeaconScanner extends Activity {
     private ScanCallback scanCallback = new ScanCallback() {
         @Override
         public void onScanResult(int callbackType, ScanResult result) {
-            BluetoothDevice device = result.getDevice();
-            if(device.getName()!=null) {
-                Log.d("BroadCast","&&&&&&&&&&   "+result.getRssi());
-                String UUID=convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
-                String name = device.getName();
-                int rssi = result.getRssi();
-                BeaconInfo info = new BeaconInfo(name, UUID, rssi);
-                if (listener != null) listener.onBeaconDetected(device, info);
+            if(bluetoothAdapter.isEnabled()) {
+                BluetoothDevice device = result.getDevice();
+                if (device.getName() != null) {
+                    //Log.d("BroadCast", "&&&&&&&&&&   " + result.getRssi());
+                    String UUID = convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
+                    String name = device.getName();
+                    int rssi = result.getRssi();
+                    BeaconInfo info = new BeaconInfo(name, UUID, rssi);
+                    if (listener != null) listener.onBeaconDetected(device, info);
+                }
+            }else{
+                stopScan();
             }
         }
     };
@@ -65,22 +68,18 @@ public class BeaconScanner extends Activity {
     }
 
     public void startScan(){
-        if (bluetoothAdapter != null && !bluetoothAdapter.isEnabled()) {
-            //Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            //startActivityForResult(enableIntent,REQUEST_ENABLE_BT);
-            bluetoothAdapter.enable();
+        if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+            if (Build.VERSION.SDK_INT < 21) {
+                bluetoothAdapter.startLeScan(LeScanCallback);
+            } else {
+                bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+                ScanSettings settings = new ScanSettings.Builder()
+                        .setReportDelay(0)
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                        .build();
+                bluetoothLeScanner.startScan(null, settings, scanCallback);
+            }
         }
-        if(Build.VERSION.SDK_INT < 21){
-            bluetoothAdapter.startLeScan(LeScanCallback);
-        }else {
-            bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
-            ScanSettings settings = new ScanSettings.Builder()
-                    .setReportDelay(0)
-                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
-                    .build();
-            bluetoothLeScanner.startScan(null, settings, scanCallback);
-        }
-
     }
 
     public void stopScan() {
