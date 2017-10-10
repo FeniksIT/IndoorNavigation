@@ -20,11 +20,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name="by.grsu.ftf.BroadCast.BroadCast">
-            <intent-filter>
-                <action android:name="BeaconSearch"/>
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

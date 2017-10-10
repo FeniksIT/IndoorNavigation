@@ -10,15 +10,14 @@ import android.bluetooth.le.ScanSettings;
 import android.os.Build;
 import android.util.Log;
 
-
-public class BeaconScanner {
+public class BeaconScanner{
 
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;
     private BeaconDetected listener;
 
     public interface BeaconDetected {
-        void onBeaconDetected(BluetoothDevice device, BeaconInfo beaconInfo);
+        void onBeaconDetected(BeaconInfo beaconInfo);
     }
 
     public void setListener(BeaconDetected listener) {
@@ -33,15 +32,12 @@ public class BeaconScanner {
             if(bluetoothAdapter.isEnabled()) {
                 BluetoothDevice device = result.getDevice();
                 if (device.getName() != null) {
-                    //Log.d("BroadCast", "&&&&&&&&&&   " + result.getRssi());
                     String UUID = convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
                     String name = device.getName();
                     int rssi = result.getRssi();
                     BeaconInfo info = new BeaconInfo(name, UUID, rssi);
-                    if (listener != null) listener.onBeaconDetected(device, info);
+                    if (listener != null) listener.onBeaconDetected(info);
                 }
-            }else{
-                stopScan();
             }
         }
     };
@@ -56,7 +52,7 @@ public class BeaconScanner {
                         String UUID=convertASCIItoString(device.getUuids().toString());
                         String name = device.getName();
                         BeaconInfo info = new BeaconInfo(name, UUID, rssi);
-                        if (listener != null) listener.onBeaconDetected(device, info);
+                        if (listener != null) listener.onBeaconDetected(info);
                     }
                 }
             };

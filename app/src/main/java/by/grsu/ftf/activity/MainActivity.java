@@ -1,112 +1,95 @@
 package by.grsu.ftf.activity;
 
-import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.support.annotation.NonNull;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import by.grsu.ftf.BroadCast.BroadCast;
-import by.grsu.ftf.beacon.BeaconSimulation;
+import java.util.List;
+
+import by.grsu.ftf.beacon.*;
 import by.grsu.ftf.bluetooth.*;
+import by.grsu.ftf.maths.*;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BluetoothServiceCallbacks {
 
-    private static final int PERMISSION_REQUEST_COARSE_LOCATION = 1;
-    final String COORDINATES_USER = "COORDINATES_USER";
+    private boolean connectService = false;
 
-    private SharedPreferences sPref;
-    public static ListView beaconListViwe;
-    public static TextView coordinatesTextViwe;
-    public static ArrayAdapter<String> adapter;
+    private ListView beaconListViwe;
+    private BluetoothService bluetoothService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (this.checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("This app needs location access");
-                builder.setMessage("Please grant location access so this app can detect peripherals.");
-                builder.setPositiveButton(android.R.string.ok, null);
-                builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, PERMISSION_REQUEST_COARSE_LOCATION);
-                        }
-                    }
-                });
-                builder.show();
-            }
-        }
         beaconListViwe = (ListView)findViewById(R.id.BeaconListViwe);
-        coordinatesTextViwe = (TextView) findViewById(R.id.coordinatesUser);
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, BroadCast.getBeacon());
-        beaconListViwe.setAdapter(adapter);
-        loadCoordinatesUser();
+        Intent intent = new Intent(this, BluetoothService.class);
+        bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        //AdapterBeacon adapter = new AdapterBeacon(this, bluetoothService.getListBeacon());
+        //beaconListViwe.setAdapter(adapter);
+    }
+
+    private ServiceConnection mConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            BluetoothService.ServiceBeaconBinder binder = (BluetoothService.ServiceBeaconBinder) service;
+            bluetoothService = binder.getService();
+            connectService = true;
+            bluetoothService.setCallbacks(MainActivity.this);
+            Log.d("MainActivity", "Connect   ");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            connectService = false;
+            Log.d("MainActivity", "DisConnect   ");
+        }
+    };
+
+    @Override
+    public void beaconCallbacks(List<BeaconInfo> beaconInfoList, boolean flagBluetoothEnable){
+        Log.d("MainActivity", "Adapter   ");
+        if(connectService & flagBluetoothEnable) {
+            AdapterBeacon adapter = new AdapterBeacon(this, bluetoothService.getListBeacon());
+            beaconListViwe.setAdapter(adapter);
+        }else{
+            bluetoothEnable();
+        }
     }
 
     @Override
     protected void onDestroy() {
-        //stopService(new Intent(MainActivity.this, BluetoothService.class));
-        saveCoordinatesUser();
+        unbindService(mConnection);
+        connectService = false;
         super.onDestroy();
     }
 
-    public void onClickStart(View view) {
-        //startService(new Intent(MainActivity.this, BeaconSimulation.class)); //Эмулятор биконов
-        startService(new Intent(MainActivity.this, BluetoothService.class)); // Поиск биконов
-    }
-
-    public void onClickStop(View view) {
-        //stopService(new Intent(MainActivity.this, BeaconSimulation.class));
-        stopService(new Intent(MainActivity.this, BluetoothService.class));
-    }
-
-    void saveCoordinatesUser() {
-        sPref = getPreferences(MODE_PRIVATE);
-        SharedPreferences.Editor ed = sPref.edit();
-        ed.putString(COORDINATES_USER, coordinatesTextViwe.getText().toString());
-        ed.commit();
-    }
-
-    void loadCoordinatesUser() {
-        sPref = getPreferences(MODE_PRIVATE);
-        String savedText = sPref.getString(COORDINATES_USER,"");
-        coordinatesTextViwe.setText(savedText);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_COARSE_LOCATION: {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("coarse location permission granted");
-                } else {
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setTitle("Functionality limited");
-                    builder.setMessage("Since location access has not been granted, this app will not be able to discover beacons when in the background.");
-                    builder.setPositiveButton(android.R.string.ok, null);
-                    builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                        }
-                    });
-                    builder.show();
+    private void bluetoothEnable(){
+        final BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(!bluetoothAdapter.isEnabled()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Важное сообщение");
+            builder.setMessage("Приложению требуется включить Bluetooth на устройстве");
+            builder.setNegativeButton("Отмена", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
                 }
-            }
+            });
+            builder.setPositiveButton("Включить", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    bluetoothAdapter.enable();
+                }
+            });
+            builder.show();
         }
     }
 }
