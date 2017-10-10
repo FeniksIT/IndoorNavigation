@@ -20,7 +20,7 @@ public class BluetoothService extends Service {
     private BeaconScanner scanner = new BeaconScanner();
     private Handler handler = new Handler();
     private BluetoothAdapter bluetoothAdapter;
-    private List<BeaconInfo> beacon = new ArrayList<>();
+    private static List<BeaconInfo> beacon = new ArrayList<>();
     private BluetoothServiceCallbacks bluetoothServiceCallbacks;
 
     @Override
@@ -37,7 +37,7 @@ public class BluetoothService extends Service {
             if(!bluetoothAdapter.isEnabled() & flagEnableBluetooth){
                 if (bluetoothServiceCallbacks != null){
                     flagEnableBluetooth=false;
-                    bluetoothServiceCallbacks.beaconCallbacks(beacon,false);
+                    bluetoothServiceCallbacks.beaconCallbacks(false);
                 }
             }
             if(bluetoothAdapter.isEnabled()){
@@ -57,7 +57,7 @@ public class BluetoothService extends Service {
                     if(bluetoothAdapter.isEnabled()) {
                         sortingBeacon(beaconInfo);
                         if (bluetoothServiceCallbacks != null){
-                            bluetoothServiceCallbacks.beaconCallbacks(beacon,true);
+                            bluetoothServiceCallbacks.beaconCallbacks(true);
                         }
                     }
                 }
@@ -69,13 +69,12 @@ public class BluetoothService extends Service {
         bluetoothServiceCallbacks = callbacks;
     }
 
-    public List<BeaconInfo> getListBeacon(){
+    public static List<BeaconInfo> getListBeacon(){
         return beacon;
     }
 
     @Override
     public boolean onUnbind(Intent intent) {
-        //scanner.stopScan();
         handler.removeCallbacks(beaconDetectedRunnable);
         handler.removeCallbacks(bluetoothDetectedRunnable);
         return super.onUnbind(intent);

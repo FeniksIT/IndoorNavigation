@@ -13,9 +13,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 
-import java.util.List;
-
-import by.grsu.ftf.beacon.*;
 import by.grsu.ftf.bluetooth.*;
 import by.grsu.ftf.maths.*;
 
@@ -24,7 +21,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     private boolean connectService = false;
 
     private ListView beaconListViwe;
-    private BluetoothService bluetoothService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +29,15 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
         beaconListViwe = (ListView)findViewById(R.id.BeaconListViwe);
         Intent intent = new Intent(this, BluetoothService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        //AdapterBeacon adapter = new AdapterBeacon(this, bluetoothService.getListBeacon());
-        //beaconListViwe.setAdapter(adapter);
+        AdapterBeacon adapter = new AdapterBeacon(this, BluetoothService.getListBeacon());
+        beaconListViwe.setAdapter(adapter);
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
             BluetoothService.ServiceBeaconBinder binder = (BluetoothService.ServiceBeaconBinder) service;
-            bluetoothService = binder.getService();
+            BluetoothService bluetoothService = binder.getService();
             connectService = true;
             bluetoothService.setCallbacks(MainActivity.this);
             Log.d("MainActivity", "Connect   ");
@@ -55,10 +51,10 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     };
 
     @Override
-    public void beaconCallbacks(List<BeaconInfo> beaconInfoList, boolean flagBluetoothEnable){
+    public void beaconCallbacks(boolean flagBluetoothEnable){
         Log.d("MainActivity", "Adapter   ");
         if(connectService & flagBluetoothEnable) {
-            AdapterBeacon adapter = new AdapterBeacon(this, bluetoothService.getListBeacon());
+            AdapterBeacon adapter = new AdapterBeacon(this, BluetoothService.getListBeacon());
             beaconListViwe.setAdapter(adapter);
         }else{
             bluetoothEnable();
