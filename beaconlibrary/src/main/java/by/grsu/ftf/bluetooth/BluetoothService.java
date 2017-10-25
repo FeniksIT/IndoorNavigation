@@ -87,11 +87,9 @@ public class BluetoothService extends Service {
             info = beacon.get(i);
             if(!info.getUUID().equals(beaconInfo.getUUID())) {
                 beacon.add(beaconInfo);
-                break;
             }else{
                 beacon.remove(i);
                 beacon.add(i,beaconInfo);
-                break;
             }
         }
     }
