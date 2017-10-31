@@ -1,11 +1,19 @@
 package by.grsu.ftf.bluetooth;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Intent;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,19 +24,29 @@ public class BluetoothService extends Service {
 
     private boolean flagEnableBluetooth  = true;
 
-    private final IBinder mBinder = new ServiceBeaconBinder();
-    private BeaconScanner scanner = new BeaconScanner();
+    private ServiceBeaconBinder serviceBeaconBinder = new ServiceBeaconBinder();
+
+    private IBinder mBinder = new ServiceBeaconBinder();
     private Handler handler = new Handler();
     private BluetoothAdapter bluetoothAdapter;
-    private static List<BeaconInfo> beacon = new ArrayList<>();
+    private BluetoothLeScanner bluetoothLeScanner;
     private BluetoothServiceCallbacks bluetoothServiceCallbacks;
+    private Beacon beacon;
+
 
     @Override
     public IBinder onBind(Intent intent) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        beaconDetectedRunnable.run();
-        bluetoothDetectedRunnable.run();
+        startScan();
+        Log.d("MainActivity", " onBind   ");
         return mBinder;
+    }
+
+    @Override
+    public void onCreate() {
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        bluetoothDetectedRunnable.run();
+        super.onCreate();
     }
 
     private Runnable bluetoothDetectedRunnable = new Runnable() {
@@ -37,61 +55,105 @@ public class BluetoothService extends Service {
             if(!bluetoothAdapter.isEnabled() & flagEnableBluetooth){
                 if (bluetoothServiceCallbacks != null){
                     flagEnableBluetooth=false;
-                    bluetoothServiceCallbacks.beaconCallbacks(false);
+                    bluetoothServiceCallbacks.beaconCallbacks(beacon,false);
                 }
             }
             if(bluetoothAdapter.isEnabled()){
-                scanner.startScan();
+                startScan();
                 flagEnableBluetooth = true;
             }
             handler.postDelayed(this,200);
         }
     };
 
-    private Runnable beaconDetectedRunnable = new Runnable() {
+    //SDK>21
+    @SuppressLint("NewApi")
+    private ScanCallback scanCallback = new ScanCallback() {
         @Override
-        public void run() {
-            scanner.setListener(new BeaconScanner.BeaconDetected() {
-                @Override
-                public void onBeaconDetected(BeaconInfo beaconInfo) {
-                    if(bluetoothAdapter.isEnabled()) {
-                        sortingBeacon(beaconInfo);
+        public void onScanResult(int callbackType, ScanResult result) {
+            BluetoothDevice device = result.getDevice();
+            if (device.getName() != null) {
+                String UUID = convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
+                String name = device.getName();
+                int rssi = result.getRssi();
+                beacon = new Beacon(name, UUID, rssi);
+                if (bluetoothServiceCallbacks != null){
+                    bluetoothServiceCallbacks.beaconCallbacks(beacon,true);
+                }
+            }
+        }
+    };
+
+    //SDK<21
+    private BluetoothAdapter.LeScanCallback LeScanCallback = new BluetoothAdapter.LeScanCallback() {
+        public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
+            new Runnable() {
+                public void run() {
+                    // Требуется проверка на android 4.4
+                    if(device.getName()!=null) {
+                        String UUID=convertASCIItoString(device.getUuids().toString());
+                        String name = device.getName();
+                        beacon = new Beacon(name, UUID, rssi);
                         if (bluetoothServiceCallbacks != null){
-                            bluetoothServiceCallbacks.beaconCallbacks(true);
+                            bluetoothServiceCallbacks.beaconCallbacks(beacon,true);
                         }
                     }
                 }
-            });
+            };
         }
     };
+
+    private void startScan(){
+        if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+            if (Build.VERSION.SDK_INT < 21) {
+                bluetoothAdapter.startLeScan(LeScanCallback);
+            } else {
+                bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
+                ScanSettings settings = new ScanSettings.Builder()
+                        .setReportDelay(0)
+                        .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                        .build();
+                bluetoothLeScanner.startScan(null, settings, scanCallback);
+            }
+        }
+    }
+
+    private void stopScan() {
+        if(Build.VERSION.SDK_INT < 21) {
+            bluetoothAdapter.stopLeScan(LeScanCallback);
+        }else{
+            bluetoothLeScanner.stopScan(scanCallback);
+            bluetoothLeScanner = null;
+        }
+    }
+
 
     public void setCallbacks(BluetoothServiceCallbacks callbacks) {
         bluetoothServiceCallbacks = callbacks;
     }
 
-    public static List<BeaconInfo> getListBeacon(){
-        return beacon;
-    }
-
     @Override
     public boolean onUnbind(Intent intent) {
-        handler.removeCallbacks(beaconDetectedRunnable);
-        handler.removeCallbacks(bluetoothDetectedRunnable);
+        Log.d("MainActivity", "onUnbind   ");
         return super.onUnbind(intent);
     }
 
-    private void sortingBeacon(BeaconInfo beaconInfo){
-        BeaconInfo info;
-        if (beacon.size()==0) beacon.add(beaconInfo);
-        for (int i=0;i<beacon.size();i++){
-            info = beacon.get(i);
-            if(!info.getUUID().equals(beaconInfo.getUUID())) {
-                beacon.add(beaconInfo);
-            }else{
-                beacon.remove(i);
-                beacon.add(i,beaconInfo);
-            }
-        }
+    @Override
+    public void onDestroy() {
+        stopScan();
+        handler.removeCallbacks(bluetoothDetectedRunnable);
+        Log.d("MainActivity", "onDestroy   ");
+        super.onDestroy();
+    }
+
+    private String convertASCIItoString(String  UUID){
+        UUID = UUID.substring(1,UUID.length()-1);
+        UUID = UUID.replaceAll("-","");
+        UUID = UUID.replaceAll("00","");
+        byte [] txtInByte = new byte [UUID.length() / 2];
+        int j = 0;
+        for (int i = 0; i < UUID.length(); i += 2) txtInByte[j++] = Byte.parseByte(UUID.substring(i, i + 2), 16);
+        return String.valueOf(new StringBuffer(new String(txtInByte)).reverse());
     }
 
     public class ServiceBeaconBinder extends Binder {

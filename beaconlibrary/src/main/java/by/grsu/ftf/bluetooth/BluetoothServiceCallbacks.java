@@ -1,5 +1,7 @@
 package by.grsu.ftf.bluetooth;
 
+import by.grsu.ftf.beacon.Beacon;
+
 public interface BluetoothServiceCallbacks {
-    void beaconCallbacks(boolean flagBluetoothEnable);
+    void beaconCallbacks(Beacon beacon, boolean flagBluetoothEnable);
 }

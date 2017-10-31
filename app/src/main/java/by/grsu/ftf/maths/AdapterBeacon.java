@@ -10,26 +10,31 @@ import android.widget.TextView;
 import java.util.List;
 
 import by.grsu.ftf.activity.R;
-import by.grsu.ftf.beacon.BeaconInfo;
+import by.grsu.ftf.beacon.Beacon;
 
 public class AdapterBeacon extends BaseAdapter{
 
-    private List<BeaconInfo> beaconInfoList;
+    private List<Beacon> beaconList;
     private LayoutInflater layoutInflate;
 
-    public AdapterBeacon(Context context, List<BeaconInfo> beaconInfo){
-        beaconInfoList=beaconInfo;
+    public AdapterBeacon(Context context, List<Beacon> beacon){
+        beaconList = beacon;
         layoutInflate = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public int getCount() {
-        return beaconInfoList.size();
+    public void notifyDataSetChanged() {
+        super.notifyDataSetChanged();
     }
 
     @Override
-    public BeaconInfo getItem(int position) {
-        return beaconInfoList.get(position);
+    public int getCount() {
+        return beaconList.size();
+    }
+
+    @Override
+    public Beacon getItem(int position) {
+        return beaconList.get(position);
     }
 
     @Override
@@ -43,12 +48,14 @@ public class AdapterBeacon extends BaseAdapter{
         if (view == null) {
             view = layoutInflate.inflate(R.layout.item, parent, false);
         }
-        BeaconInfo beaconInfo = getBeaconInfo(position);
-        ((TextView)view.findViewById(R.id.tvDescr)).setText(beaconInfo.getName()+" -- "+beaconInfo.getRssi());
+        Beacon beacon = getBeaconInfo(position);
+        ((TextView)view.findViewById(R.id.idBeacon)).setText(beacon.getName());
+        ((TextView)view.findViewById(R.id.UUIDBeacon)).setText(beacon.getUUID());
+        ((barRssi)view.findViewById(R.id.RssiB)).setValueRssi(String.valueOf(beacon.getRssi()));
         return view;
     }
 
-    private BeaconInfo getBeaconInfo(int position) {
+    private Beacon getBeaconInfo(int position) {
         return getItem(position);
     }
 }

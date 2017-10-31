@@ -13,23 +13,24 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
 
+import by.grsu.ftf.beacon.Beacon;
 import by.grsu.ftf.bluetooth.*;
 import by.grsu.ftf.maths.*;
 
 public class MainActivity extends AppCompatActivity implements BluetoothServiceCallbacks {
 
     private boolean connectService = false;
-
-    private ListView beaconListViwe;
+    ListView beaconListViwe;
+    AdapterBeacon adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        beaconListViwe = (ListView)findViewById(R.id.BeaconListViwe);
+        beaconListViwe = (ListView) findViewById(R.id.BeaconListViwe);
         Intent intent = new Intent(this, BluetoothService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        AdapterBeacon adapter = new AdapterBeacon(this, BluetoothService.getListBeacon());
+        adapter = new AdapterBeacon(this, CollectionsBeacon.getListBeacon());
         beaconListViwe.setAdapter(adapter);
     }
 
@@ -51,11 +52,10 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     };
 
     @Override
-    public void beaconCallbacks(boolean flagBluetoothEnable){
-        Log.d("MainActivity", "Adapter   ");
+    public void beaconCallbacks(Beacon beacon, boolean flagBluetoothEnable){
         if(connectService & flagBluetoothEnable) {
-            AdapterBeacon adapter = new AdapterBeacon(this, BluetoothService.getListBeacon());
-            beaconListViwe.setAdapter(adapter);
+            CollectionsBeacon.sortingBeacon(beacon);
+            adapter.notifyDataSetChanged();
         }else{
             bluetoothEnable();
         }
@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     protected void onDestroy() {
         unbindService(mConnection);
         connectService = false;
+        Log.d("MainActivity", " onDestroy MAI   ");
         super.onDestroy();
     }
 

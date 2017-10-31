@@ -1,13 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-        <TextView
-            android:id="@+id/tvDescr"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/idBeacon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="wwwwwwwwwwwww"
+        android:textColor="#303f9f"
+        android:textSize="20sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+    <TextView
+        android:id="@+id/UUIDBeacon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="qqqqqqqqqqqq"
+        android:layout_marginTop="25dp"
+        android:textSize="15sp"/>
+    <RelativeLayout
+        android:layout_width="200dp"
+        android:layout_height="10dp"
+        android:layout_marginTop="8dp"
+        android:layout_alignTop="@+id/UUIDBeacon"
+        android:layout_alignParentEnd="true">
+        <by.grsu.ftf.maths.barRssi
+            android:id="@+id/RssiB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text=""
-            android:textSize="20sp">
-        </TextView>
-</LinearLayout>
+            app:value="-70"
+            app:max="-35"
+            app:min="-90"/>
+    </RelativeLayout>
+</RelativeLayout>
