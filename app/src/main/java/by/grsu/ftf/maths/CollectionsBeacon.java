@@ -1,26 +1,25 @@
 package by.grsu.ftf.maths;
 
-import android.support.v4.util.ArrayMap;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import by.grsu.ftf.beacon.Beacon;
 
 public class CollectionsBeacon {
 
-    private static List<Beacon> beaconList = new ArrayList<>();
-    private static ArrayMap<String,Beacon> beaconArrayMap = new ArrayMap<>();
+    private List<Beacon> beaconList = new ArrayList<>();
+    private HashMap<String, Beacon> beaconHashMap = new HashMap<>();
 
-    public static void sortingBeacon(Beacon beacon){
-        beaconArrayMap.put(beacon.getName(),beacon);
+    public void addBeacon(Beacon beacon){
+        beaconHashMap.put(beacon.getName(),beacon);
         beaconList.clear();
-        for (int i = 0; i < beaconArrayMap.size(); i++) {
-            beaconList.add(beaconArrayMap.valueAt(i));
+        for (Beacon s : beaconHashMap.values()) {
+            beaconList.add(s);
         }
     }
 
-    public static List<Beacon> getListBeacon(){
+    public List<Beacon> getListBeacon(){
         return beaconList;
     }
 }

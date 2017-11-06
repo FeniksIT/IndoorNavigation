@@ -42,20 +42,25 @@ public class AdapterBeacon extends BaseAdapter{
         return position;
     }
 
+    private Beacon getBeacon(int position) {
+        return getItem(position);
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
         if (view == null) {
             view = layoutInflate.inflate(R.layout.item, parent, false);
         }
-        Beacon beacon = getBeaconInfo(position);
+        Beacon beacon = getBeacon(position);
+        String coefficient = coefficientRssi(-90.0F,-35.0F,(float)beacon.getRssi());
         ((TextView)view.findViewById(R.id.idBeacon)).setText(beacon.getName());
         ((TextView)view.findViewById(R.id.UUIDBeacon)).setText(beacon.getUUID());
-        ((barRssi)view.findViewById(R.id.RssiB)).setValueRssi(String.valueOf(beacon.getRssi()));
+        ((RssiBar)view.findViewById(R.id.RssiB)).setValue(coefficient);
         return view;
     }
 
-    private Beacon getBeaconInfo(int position) {
-        return getItem(position);
+    private String coefficientRssi(float minRssi, float maxRssi, float valueRssi){
+        return String.valueOf(Math.abs((minRssi - valueRssi)/(maxRssi - minRssi)));
     }
 }

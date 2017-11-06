@@ -13,18 +13,12 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import by.grsu.ftf.beacon.*;
 
 public class BluetoothService extends Service {
 
     private boolean flagEnableBluetooth  = true;
-
-    private ServiceBeaconBinder serviceBeaconBinder = new ServiceBeaconBinder();
 
     private IBinder mBinder = new ServiceBeaconBinder();
     private Handler handler = new Handler();
@@ -38,7 +32,6 @@ public class BluetoothService extends Service {
     public IBinder onBind(Intent intent) {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         startScan();
-        Log.d("MainActivity", " onBind   ");
         return mBinder;
     }
 
@@ -127,14 +120,8 @@ public class BluetoothService extends Service {
         }
     }
 
-
-    public void setCallbacks(BluetoothServiceCallbacks callbacks) {
-        bluetoothServiceCallbacks = callbacks;
-    }
-
     @Override
     public boolean onUnbind(Intent intent) {
-        Log.d("MainActivity", "onUnbind   ");
         return super.onUnbind(intent);
     }
 
@@ -142,7 +129,6 @@ public class BluetoothService extends Service {
     public void onDestroy() {
         stopScan();
         handler.removeCallbacks(bluetoothDetectedRunnable);
-        Log.d("MainActivity", "onDestroy   ");
         super.onDestroy();
     }
 
@@ -157,8 +143,8 @@ public class BluetoothService extends Service {
     }
 
     public class ServiceBeaconBinder extends Binder {
-        public BluetoothService getService() {
-            return BluetoothService.this;
+        public void setCallbacks(BluetoothServiceCallbacks callbacks) {
+            bluetoothServiceCallbacks = callbacks;
         }
     }
 

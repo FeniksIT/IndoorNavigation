@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
     <TextView
         android:id="@+id/idBeacon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="wwwwwwwwwwwww"
+        tools:text="wwwwwwwwwwwww"
         android:textColor="#303f9f"
         android:textSize="20sp"
         android:layout_alignParentTop="true"
@@ -17,21 +17,15 @@
         android:id="@+id/UUIDBeacon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="qqqqqqqqqqqq"
+        tools:text="qqqqqqqqqqqq"
         android:layout_marginTop="25dp"
         android:textSize="15sp"/>
-    <RelativeLayout
+    <by.grsu.ftf.maths.RssiBar
+        android:id="@+id/RssiB"
         android:layout_width="200dp"
         android:layout_height="10dp"
-        android:layout_marginTop="8dp"
-        android:layout_alignTop="@+id/UUIDBeacon"
-        android:layout_alignParentEnd="true">
-        <by.grsu.ftf.maths.barRssi
-            android:id="@+id/RssiB"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:value="-70"
-            app:max="-35"
-            app:min="-90"/>
-    </RelativeLayout>
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="33dp"
+        app:value="-70"
+        app:color="#AAFAAF"/>
 </RelativeLayout>
