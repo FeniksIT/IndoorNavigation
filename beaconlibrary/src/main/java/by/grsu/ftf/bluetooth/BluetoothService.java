@@ -48,7 +48,7 @@ public class BluetoothService extends Service {
             if(!bluetoothAdapter.isEnabled() & flagEnableBluetooth){
                 if (bluetoothServiceCallbacks != null){
                     flagEnableBluetooth=false;
-                    bluetoothServiceCallbacks.beaconCallbacks(beacon,false);
+                    bluetoothServiceCallbacks.beaconCallbacks(beacon,flagEnableBluetooth);
                 }
             }
             if(bluetoothAdapter.isEnabled()){
@@ -71,7 +71,7 @@ public class BluetoothService extends Service {
                 int rssi = result.getRssi();
                 beacon = new Beacon(name, UUID, rssi);
                 if (bluetoothServiceCallbacks != null){
-                    bluetoothServiceCallbacks.beaconCallbacks(beacon,true);
+                    bluetoothServiceCallbacks.beaconCallbacks(beacon,flagEnableBluetooth);
                 }
             }
         }
@@ -112,11 +112,13 @@ public class BluetoothService extends Service {
     }
 
     private void stopScan() {
-        if(Build.VERSION.SDK_INT < 21) {
-            bluetoothAdapter.stopLeScan(LeScanCallback);
-        }else{
-            bluetoothLeScanner.stopScan(scanCallback);
-            bluetoothLeScanner = null;
+        if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
+            if (Build.VERSION.SDK_INT < 21) {
+                bluetoothAdapter.stopLeScan(LeScanCallback);
+            } else {
+                bluetoothLeScanner.stopScan(scanCallback);
+                bluetoothLeScanner = null;
+            }
         }
     }
 

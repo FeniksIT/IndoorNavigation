@@ -31,8 +31,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     private boolean connectService = false;
 
     private AdapterBeacon adapter;
-    private List<Beacon > beaconList = new ArrayList<>();
-    private CollectionsBeacon collectionsBeacon = new CollectionsBeacon();
+    private ControllerBeacon controllerBeacon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,16 +40,19 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
             accessLocationPermission();
         }
         setContentView(R.layout.activity_main);
-        ListView beaconListViwe = (ListView) findViewById(R.id.BeaconListViwe);
+        ListView beaconListView = (ListView) findViewById(R.id.BeaconListViwe);
         Intent intent = new Intent(this, BluetoothService.class);
         bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+        List<Beacon> beaconList;
         if (savedInstanceState == null) {
-            beaconList = collectionsBeacon.getListBeacon();
+            controllerBeacon = new ControllerBeacon();
+            beaconList = controllerBeacon.getListBeacon();
         }else{
             beaconList = savedInstanceState.getParcelableArrayList(KEY_SAVE_LIST_BEACON);
+            controllerBeacon = new ControllerBeacon(beaconList);
         }
-        adapter = new AdapterBeacon(this, beaconList);
-        beaconListViwe.setAdapter(adapter);
+        adapter = new AdapterBeacon(controllerBeacon.getListBeacon());
+        beaconListView.setAdapter(adapter);
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     @Override
     public void beaconCallbacks(Beacon beacon, boolean flagBluetoothEnable){
         if(connectService & flagBluetoothEnable) {
-            collectionsBeacon.addBeacon(beacon);
+            controllerBeacon.addBeacon(beacon);
             adapter.notifyDataSetChanged();
         }else{
             bluetoothEnable();
@@ -90,8 +92,9 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(KEY_SAVE_LIST_BEACON, (ArrayList<? extends Parcelable>) beaconList);
+        outState.putParcelableArrayList(KEY_SAVE_LIST_BEACON, (ArrayList<? extends Parcelable>) controllerBeacon.getListBeacon());
     }
+
     @TargetApi(23)
     private void accessLocationPermission() {
         int accessCoarseLocation = checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION);
@@ -132,5 +135,4 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
             builder.show();
         }
     }
-
 }

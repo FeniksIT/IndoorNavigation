@@ -12,7 +12,7 @@ import android.view.View;
 import by.grsu.ftf.activity.R;
 
 public class RssiBar extends View {
-    private String value;
+    private float value;
     private int colorBar;
 
     private Paint paint = new Paint();
@@ -20,7 +20,7 @@ public class RssiBar extends View {
     public RssiBar (Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs, R.styleable.RssiBar, 0, 0);
-        value = typedArray.getString(R.styleable.RssiBar_value);
+        value = typedArray.getFloat(R.styleable.RssiBar_value,0);
         colorBar = typedArray.getColor(R.styleable.RssiBar_color, Color.RED);
     }
 
@@ -31,10 +31,10 @@ public class RssiBar extends View {
         paint.setColor(Color.GRAY);
         canvas.drawRect(0,0,x,y,paint);
         paint.setColor(colorBar);
-        canvas.drawRect(0,0,Float.valueOf(value)*x,y,paint);
+        canvas.drawRect(0,0,value*x,y,paint);
     }
 
-    public void setValue(String value) {
+    public void setValue(float value) {
         this.value = value;
         invalidate();
         requestLayout();
