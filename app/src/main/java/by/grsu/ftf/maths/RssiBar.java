@@ -37,6 +37,5 @@ public class RssiBar extends View {
     public void setValue(float value) {
         this.value = value;
         invalidate();
-        requestLayout();
     }
 }

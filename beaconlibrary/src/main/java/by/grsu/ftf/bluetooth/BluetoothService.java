@@ -13,6 +13,7 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 import by.grsu.ftf.beacon.*;
 
@@ -25,6 +26,7 @@ public class BluetoothService extends Service {
     private BluetoothAdapter bluetoothAdapter;
     private BluetoothLeScanner bluetoothLeScanner;
     private BluetoothServiceCallbacks bluetoothServiceCallbacks;
+    private SimulatorBeacon simulatorBeacon = new SimulatorBeacon(10);
     private Beacon beacon;
 
 
@@ -47,8 +49,9 @@ public class BluetoothService extends Service {
         public void run() {
             if(!bluetoothAdapter.isEnabled() & flagEnableBluetooth){
                 if (bluetoothServiceCallbacks != null){
-                    flagEnableBluetooth=false;
-                    bluetoothServiceCallbacks.beaconCallbacks(beacon,flagEnableBluetooth);
+                    //flagEnableBluetooth=false;
+                    beacon = simulatorBeacon.getBeacon();
+                    bluetoothServiceCallbacks.onReceivingBeacon(beacon,flagEnableBluetooth);
                 }
             }
             if(bluetoothAdapter.isEnabled()){
@@ -71,7 +74,7 @@ public class BluetoothService extends Service {
                 int rssi = result.getRssi();
                 beacon = new Beacon(name, UUID, rssi);
                 if (bluetoothServiceCallbacks != null){
-                    bluetoothServiceCallbacks.beaconCallbacks(beacon,flagEnableBluetooth);
+                    bluetoothServiceCallbacks.onReceivingBeacon(beacon,flagEnableBluetooth);
                 }
             }
         }
@@ -88,7 +91,7 @@ public class BluetoothService extends Service {
                         String name = device.getName();
                         beacon = new Beacon(name, UUID, rssi);
                         if (bluetoothServiceCallbacks != null){
-                            bluetoothServiceCallbacks.beaconCallbacks(beacon,true);
+                            bluetoothServiceCallbacks.onReceivingBeacon(beacon,true);
                         }
                     }
                 }

@@ -8,7 +8,7 @@
         android:id="@+id/idBeacon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="wwwwwwwwwwwww"
+        tools:text="ID id 1"
         android:textColor="#303f9f"
         android:textSize="20sp"
         android:layout_alignParentTop="true"
@@ -17,7 +17,7 @@
         android:id="@+id/UUIDBeacon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:text="qqqqqqqqqqqq"
+        tools:text="UUID Beacon 1"
         android:layout_marginTop="25dp"
         android:textSize="15sp"/>
     <by.grsu.ftf.maths.RssiBar
@@ -26,6 +26,6 @@
         android:layout_height="10dp"
         android:layout_alignParentRight="true"
         android:layout_marginTop="33dp"
-        app:value="-70"
+        app:value="0.5"
         app:color="#AAFAAF"/>
 </RelativeLayout>
