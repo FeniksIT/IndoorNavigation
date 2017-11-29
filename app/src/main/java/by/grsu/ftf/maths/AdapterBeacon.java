@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import by.grsu.ftf.activity.R;
@@ -59,6 +60,10 @@ public class AdapterBeacon extends BaseAdapter {
         beaconHolder.textViewUUIDBeacon.setText(beacon.getUUID());
         beaconHolder.rssiBarCoefficient.setValue(coefficient);
         return view;
+    }
+
+    public void updateList(List<Beacon> beaconList){
+        this.beaconList = beaconList;
     }
 
     private class BeaconHolder {

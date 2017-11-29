@@ -32,8 +32,6 @@ public class BluetoothService extends Service {
 
     @Override
     public IBinder onBind(Intent intent) {
-        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        startScan();
         return mBinder;
     }
 
@@ -41,6 +39,7 @@ public class BluetoothService extends Service {
     public void onCreate() {
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         bluetoothDetectedRunnable.run();
+        startScan();
         super.onCreate();
     }
 
@@ -101,7 +100,7 @@ public class BluetoothService extends Service {
 
     private void startScan(){
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-            if (Build.VERSION.SDK_INT < 21) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 bluetoothAdapter.startLeScan(LeScanCallback);
             } else {
                 bluetoothLeScanner = bluetoothAdapter.getBluetoothLeScanner();
@@ -116,7 +115,7 @@ public class BluetoothService extends Service {
 
     private void stopScan() {
         if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
-            if (Build.VERSION.SDK_INT < 21) {
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 bluetoothAdapter.stopLeScan(LeScanCallback);
             } else {
                 bluetoothLeScanner.stopScan(scanCallback);

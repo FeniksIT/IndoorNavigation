@@ -1,14 +1,12 @@
 package by.grsu.ftf.activity;
 
-import android.annotation.TargetApi;
+
 import android.bluetooth.BluetoothAdapter;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -36,9 +34,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-            accessLocationPermission();
-        }
         setContentView(R.layout.activity_main);
         ListView beaconListView = (ListView) findViewById(R.id.BeaconListViwe);
         Intent intent = new Intent(this, BluetoothService.class);
@@ -74,16 +69,14 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     public void onReceivingBeacon(Beacon beacon, boolean flagBluetoothEnable){
         if(connectService & flagBluetoothEnable) {
             beaconController.addBeacon(beacon);
-            listBeacon.clear();
-            listBeacon.addAll(beaconController.getBeaconList());
-            //listBeacon = beaconController.getBeaconList();
+            listBeacon = beaconController.getBeaconList();
+            adapter.updateList(listBeacon);
             adapter.notifyDataSetChanged();
         }else{
             //bluetoothEnable();
             beaconController.addBeacon(beacon);
-            listBeacon.clear();
-            listBeacon.addAll(beaconController.getBeaconList());
-            //listBeacon = beaconController.getBeaconList();
+            listBeacon = beaconController.getBeaconList();
+            adapter.updateList(listBeacon);
             adapter.notifyDataSetChanged();
         }
     }
@@ -100,26 +93,6 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(KEY_SAVE_LIST_BEACON, (ArrayList<? extends Beacon>) listBeacon);
-    }
-
-    @TargetApi(23)
-    private void accessLocationPermission() {
-        int accessCoarseLocation = checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        int accessFineLocation   = checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION);
-
-        List<String> listRequestPermission = new ArrayList<>();
-
-        if (accessCoarseLocation != PackageManager.PERMISSION_GRANTED) {
-            listRequestPermission.add(android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        if (accessFineLocation != PackageManager.PERMISSION_GRANTED) {
-            listRequestPermission.add(android.Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-
-        if (!listRequestPermission.isEmpty()) {
-            String[] strRequestPermission = listRequestPermission.toArray(new String[listRequestPermission.size()]);
-            requestPermissions(strRequestPermission, 1);
-        }
     }
 
     private void bluetoothEnable(){

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import android.annotation.SuppressLint;
 
@@ -17,6 +18,7 @@ public class BeaconController {
 
     private HashMap<String, Beacon> beaconHashMap = new HashMap<>();
     private HashMap<String, String> dateReceiving = new HashMap<>();
+    private TreeMap<Integer, Beacon> beaconTreeMap = new TreeMap<>();
     @SuppressLint("SimpleDateFormat")
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 
@@ -50,8 +52,17 @@ public class BeaconController {
         }
     }
 
+    /*private void deleteLowBeacon(){
+        beaconTreeMap.clear();
+        for(Beacon beacon : beaconHashMap.values()){
+            beaconTreeMap.put(beacon.getRssi(),beacon);
+        }
+    }*/
+
     public List<Beacon> getBeaconList(){
         deleteOldBeacons();
+        //deleteLowBeacon();
         return new ArrayList<>(beaconHashMap.values());
+        //return new ArrayList<>(beaconTreeMap.values());
     }
 }
