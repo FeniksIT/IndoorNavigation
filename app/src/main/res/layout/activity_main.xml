@@ -4,11 +4,18 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="by.grsu.ftf.activity.MainActivity">
+    <Button
+        android:text="Map"
+        android:id="@+id/goMap"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
         android:id="@+id/BeaconListViwe"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp">
+        android:layout_marginRight="5dp"
+        android:layout_centerHorizontal="true">
     </ListView>
 </RelativeLayout>

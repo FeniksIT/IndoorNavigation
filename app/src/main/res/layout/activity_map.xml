@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="by.grsu.ftf.activity.MapActivity">
+    <Button
+        android:text="Activity"
+        android:id="@+id/goActivity"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+    <by.grsu.ftf.maths.MapView
+        android:id="@+id/ImageMap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp" />
+
+</RelativeLayout>

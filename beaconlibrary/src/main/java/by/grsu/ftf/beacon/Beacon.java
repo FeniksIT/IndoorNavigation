@@ -1,5 +1,6 @@
 package by.grsu.ftf.beacon;
 
+import android.graphics.PointF;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,6 +9,7 @@ public class Beacon implements Parcelable {
     private String name;
     private String UUID;
     private int rssi;
+    private PointF coordinates;
 
     public Beacon(){
     }
@@ -17,6 +19,14 @@ public class Beacon implements Parcelable {
         this.name = parcel.readString();
         this.UUID = parcel.readString();
         this.rssi = parcel.readInt();
+        this.coordinates = coordinates;
+    }
+
+    public Beacon(Beacon beacon, PointF coordinates){
+        this.name = beacon.getName();
+        this.UUID = beacon.getUUID();
+        this.rssi = beacon.getRssi();
+        this.coordinates = coordinates;
     }
 
     public Beacon(String name, String UUID, int rssi) {
@@ -58,5 +68,7 @@ public class Beacon implements Parcelable {
     public int getRssi() {
         return rssi;
     }
-
+    public PointF getCoordinates() {
+        return coordinates;
+    }
 }

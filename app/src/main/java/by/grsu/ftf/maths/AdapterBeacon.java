@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import by.grsu.ftf.activity.R;
@@ -48,8 +47,9 @@ public class AdapterBeacon extends BaseAdapter {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item, parent, false);
             TextView textViewIdBeacon = (TextView) view.findViewById(R.id.idBeacon);
             TextView textViewUUIDBeacon = (TextView) view.findViewById(R.id.UUIDBeacon);
+            TextView textViewCoordinatesBeacon = (TextView) view.findViewById(R.id.coordinatesBeacon);
             RssiBar rssiBarCoefficient = (RssiBar) view.findViewById(R.id.RssiB);
-            beaconHolder = new BeaconHolder(textViewIdBeacon, textViewUUIDBeacon, rssiBarCoefficient);
+            beaconHolder = new BeaconHolder(textViewIdBeacon, textViewUUIDBeacon, rssiBarCoefficient, textViewCoordinatesBeacon);
             view.setTag(beaconHolder);
         } else {
             beaconHolder = (BeaconHolder) view.getTag();
@@ -59,6 +59,7 @@ public class AdapterBeacon extends BaseAdapter {
         beaconHolder.textViewIdBeacon.setText(beacon.getName());
         beaconHolder.textViewUUIDBeacon.setText(beacon.getUUID());
         beaconHolder.rssiBarCoefficient.setValue(coefficient);
+        beaconHolder.textViewCoordinatesBeacon.setText(beacon.getCoordinates().toString());
         return view;
     }
 
@@ -70,11 +71,13 @@ public class AdapterBeacon extends BaseAdapter {
         private TextView textViewIdBeacon;
         private TextView textViewUUIDBeacon;
         private RssiBar rssiBarCoefficient;
+        private TextView textViewCoordinatesBeacon;
 
-        private BeaconHolder(TextView textViewIdBeacon, TextView textViewUUIDBeacon, RssiBar rssiBarCoefficient) {
+        private BeaconHolder(TextView textViewIdBeacon, TextView textViewUUIDBeacon, RssiBar rssiBarCoefficient, TextView textViewCoordinatesBeacon) {
             this.textViewIdBeacon = textViewIdBeacon;
             this.textViewUUIDBeacon = textViewUUIDBeacon;
             this.rssiBarCoefficient = rssiBarCoefficient;
+            this.textViewCoordinatesBeacon = textViewCoordinatesBeacon;
         }
     }
 }

@@ -8,15 +8,25 @@
         android:id="@+id/idBeacon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLength="20"
         tools:text="ID id 1"
         android:textColor="#303f9f"
         android:textSize="20sp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
     <TextView
+        android:id="@+id/coordinatesBeacon"
+        android:layout_width="200dp"
+        android:layout_height="27dp"
+        android:maxLength="20"
+        android:textSize="20sp"
+        tools:text="aaaaaaaaaaaaa"
+        android:layout_alignParentRight="true"/>
+    <TextView
         android:id="@+id/UUIDBeacon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:maxLength="20"
         tools:text="UUID Beacon 1"
         android:layout_marginTop="25dp"
         android:textSize="15sp"/>
