@@ -30,7 +30,7 @@
         tools:text="UUID Beacon 1"
         android:layout_marginTop="25dp"
         android:textSize="15sp"/>
-    <by.grsu.ftf.maths.RssiBar
+    <by.grsu.ftf.customView.RssiBar
         android:id="@+id/RssiB"
         android:layout_width="200dp"
         android:layout_height="10dp"

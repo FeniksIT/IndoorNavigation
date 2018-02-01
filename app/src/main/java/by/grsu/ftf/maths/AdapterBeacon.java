@@ -6,14 +6,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import by.grsu.ftf.activity.R;
 import by.grsu.ftf.beacon.Beacon;
+import by.grsu.ftf.customView.RssiBar;
 
 public class AdapterBeacon extends BaseAdapter {
 
-    private List<Beacon> beaconList;
+    private List<Beacon> beaconList = new ArrayList<>();
+
+    public AdapterBeacon(){}
 
     public AdapterBeacon(List<Beacon> beacon) {
         beaconList = beacon;

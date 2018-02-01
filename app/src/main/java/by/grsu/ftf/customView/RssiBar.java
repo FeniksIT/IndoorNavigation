@@ -1,4 +1,4 @@
-package by.grsu.ftf.maths;
+package by.grsu.ftf.customView;
 
 import android.content.Context;
 import android.content.res.TypedArray;

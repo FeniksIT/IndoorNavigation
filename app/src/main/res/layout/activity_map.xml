@@ -10,7 +10,7 @@
         android:id="@+id/goActivity"
         android:layout_width="match_parent"
         android:layout_height="50dp" />
-    <by.grsu.ftf.maths.MapView
+    <by.grsu.ftf.customView.MapView
         android:id="@+id/ImageMap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

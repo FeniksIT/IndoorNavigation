@@ -1,5 +1,7 @@
 package by.grsu.ftf.maths;
 
+import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,8 +11,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import android.annotation.SuppressLint;
 
 import by.grsu.ftf.beacon.Beacon;
 
@@ -31,9 +31,11 @@ public class BeaconController {
         }
     }
 
-    public void addBeacon(Beacon beacon) {
+    public boolean addBeacon(Beacon beacon) {
+        boolean contains = beaconHashMap.containsKey(beacon.getName());
         beaconHashMap.put(beacon.getName(),beacon);
         dateReceiving.put(beacon.getName(),simpleDateFormat.format(new Date()));
+        return contains;
     }
 
     private void deleteOldBeacons(){

@@ -6,6 +6,7 @@ import android.os.Parcelable;
 
 public class Beacon implements Parcelable {
 
+    private int id;
     private String name;
     private String UUID;
     private int rssi;
@@ -26,6 +27,13 @@ public class Beacon implements Parcelable {
         this.name = beacon.getName();
         this.UUID = beacon.getUUID();
         this.rssi = beacon.getRssi();
+        this.coordinates = coordinates;
+    }
+
+    public Beacon(String name, String UUID, int rssi,PointF coordinates) {
+        this.name = name;
+        this.UUID = UUID;
+        this.rssi = rssi;
         this.coordinates = coordinates;
     }
 
