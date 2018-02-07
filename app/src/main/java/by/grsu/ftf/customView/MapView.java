@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -18,6 +19,7 @@ import by.grsu.ftf.beacon.Beacon;
 public class MapView extends View{
 
     private Paint paint = new Paint();
+    private PointF user = new PointF(0,0);
     private Drawable drawable;
     private List<Beacon> beacons = new ArrayList<>();
 
@@ -39,12 +41,23 @@ public class MapView extends View{
         drawable.draw(canvas);
         paint.setColor(Color.RED);
         for (Beacon beacon:beacons){
-            canvas.drawCircle(x*beacon.getCoordinates().x,y*beacon.getCoordinates().y,x/100,paint);
+            if (beacon.getY() !=null) {
+                canvas.drawCircle(x * beacon.getX(), y * beacon.getY(), x / 100, paint);
+                canvas.drawText(beacon.getName(), x * beacon.getX()+x / 100, y * beacon.getY()+y / 100, paint);
+            }
         }
+        paint.setColor(Color.GREEN);
+        canvas.drawCircle(x*user.x, y*user.y, x/70, paint);
     }
 
     public void setPointFS(List<Beacon> beacons) {
         this.beacons = beacons;
         invalidate();
     }
+
+    public void setCordinateUser(PointF user){
+        this.user = user;
+        invalidate();
+    }
+
 }

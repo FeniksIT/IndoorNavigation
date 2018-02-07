@@ -1,5 +1,6 @@
 package by.grsu.ftf.maths;
 
+import android.annotation.SuppressLint;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,6 @@ public class AdapterBeacon extends BaseAdapter {
     private List<Beacon> beaconList = new ArrayList<>();
 
     public AdapterBeacon(){}
-
-    public AdapterBeacon(List<Beacon> beacon) {
-        beaconList = beacon;
-    }
 
     @Override
     public void notifyDataSetChanged() {
@@ -43,6 +40,7 @@ public class AdapterBeacon extends BaseAdapter {
         return position;
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = convertView;
@@ -63,7 +61,7 @@ public class AdapterBeacon extends BaseAdapter {
         beaconHolder.textViewIdBeacon.setText(beacon.getName());
         beaconHolder.textViewUUIDBeacon.setText(beacon.getUUID());
         beaconHolder.rssiBarCoefficient.setValue(coefficient);
-        beaconHolder.textViewCoordinatesBeacon.setText(beacon.getCoordinates().toString());
+        beaconHolder.textViewCoordinatesBeacon.setText("X: " + beacon.getX()+" Y:" + beacon.getY());
         return view;
     }
 

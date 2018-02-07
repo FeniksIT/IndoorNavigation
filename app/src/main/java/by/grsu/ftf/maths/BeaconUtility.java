@@ -1,24 +1,21 @@
 package by.grsu.ftf.maths;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.Observer;
 import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.annotation.MainThread;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
 import java.io.IOException;
 
 public class BeaconUtility {
 
+    public static final float MAX_RSSI = -35.0F;
+    public static final float MIN_RSSI = -90.0F;
+    public static final float POWER = -65;
+
+
     public static float coefficientRssi(float valueRssi){
-        float maxRssi = -35.0F;
-        float minRssi = -90.0F;
-        return Math.abs((minRssi - valueRssi)/(maxRssi - minRssi));
+        return Math.abs((MIN_RSSI - valueRssi)/(MAX_RSSI  - MIN_RSSI));
     }
 
     public void bluetoothEnable(Context context){
@@ -51,25 +48,5 @@ public class BeaconUtility {
         }
         catch (IOException | InterruptedException e){ e.printStackTrace(); }
         return false;
-    }
-
-    interface Confirmer<T> {
-        boolean test(T thingy);
-    }
-    @MainThread
-    public static <X> LiveData<X> filter(@NonNull LiveData<X> source,
-                                  @NonNull final Confirmer<X> confirmer) {
-        final MediatorLiveData<X> result=new MediatorLiveData<>();
-
-        result.addSource(source, new Observer<X>() {
-            @Override
-            public void onChanged(@Nullable X x) {
-                if (confirmer.test(x)) {
-                    result.setValue(x);
-                }
-            }
-        });
-
-        return(result);
     }
 }

@@ -26,13 +26,13 @@ public class BeaconLifecycle implements LifecycleObserver{
     void create() {
         Intent intent = new Intent(context, BluetoothService.class);
         context.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
-        Log.d("MainActivity", "!!!!!Create   ");
+        Log.d("MainActivity", "!!!!!Start   ");
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     void destroy() {
         context.unbindService(mConnection);
-        Log.d("MainActivity", "!!!!!Destroy   ");
+        Log.d("MainActivity", "!!!!!Stop   ");
     }
 
     private ServiceConnection mConnection = new ServiceConnection() {

@@ -13,9 +13,9 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
-import by.grsu.ftf.beacon.*;
+import by.grsu.ftf.beacon.Beacon;
+import by.grsu.ftf.beacon.SimulatorBeacon;
 
 public class BluetoothService extends Service {
 
@@ -68,7 +68,8 @@ public class BluetoothService extends Service {
         public void onScanResult(int callbackType, ScanResult result) {
             BluetoothDevice device = result.getDevice();
             if (device.getName() != null) {
-                String UUID = convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
+                //String UUID = convertASCIItoString(result.getScanRecord().getServiceUuids().toString());
+                String UUID = "QQ";
                 String name = device.getName();
                 int rssi = result.getRssi();
                 beacon = new Beacon(name, UUID, rssi);

@@ -9,36 +9,26 @@ import android.support.annotation.NonNull;
 import java.util.List;
 
 import by.grsu.ftf.beacon.Beacon;
-import by.grsu.ftf.maths.BeaconController;
 
 
 public class BeaconViewModal extends AndroidViewModel {
 
-    private BeaconController beaconController = new BeaconController();
-    private MutableLiveData<List<Beacon>> beacon;
-
     private BeaconRepository beaconRepository = new BeaconRepository(this.getApplication());
-    private MutableLiveData<List<BeaconRoom>> beaconID;
+    private MutableLiveData<List<Beacon>> beacon;
 
     public BeaconViewModal(@NonNull Application application) {
         super(application);
     }
 
-    public LiveData<List<BeaconRoom>> getBeacon(){
-        if(beaconID == null){
-            beaconID = new MutableLiveData<>();
+    public LiveData<List<Beacon>> getBeacon(){
+        if(beacon == null){
+            beacon = new MutableLiveData<>();
         }
-        //beacon.setValue(beaconController.getBeaconList());
         return beaconRepository.getBeacons();
     }
 
     public void addBeacon(Beacon beacon){
         beaconRepository.addBeacon(beacon);
-        //beaconController.addBeacon(new Beacon(beacon,databaseBeacons.getCoordinatesBeacon(beacon.getName())));
+        getBeacon();
     }
-
-    public void deleteALL(){
-        beaconRepository.deleteALL();
-    }
-
 }

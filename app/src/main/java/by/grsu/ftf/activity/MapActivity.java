@@ -8,25 +8,24 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import by.grsu.ftf.architecture.BeaconLifecycle;
-import by.grsu.ftf.architecture.BeaconRoom;
 import by.grsu.ftf.architecture.BeaconViewModal;
 import by.grsu.ftf.beacon.Beacon;
 import by.grsu.ftf.bluetooth.BluetoothServiceCallbacks;
 import by.grsu.ftf.customView.MapView;
+import by.grsu.ftf.navigation.Trilateration;
 
 public class MapActivity extends AppCompatActivity implements BluetoothServiceCallbacks, View.OnClickListener {
 
     private MapView map;
     private BeaconViewModal beaconViewModal;
-    private List<Beacon> beaconList = new ArrayList<>();
+    private Beacon beacon1;
+    private PointF user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,28 +36,35 @@ public class MapActivity extends AppCompatActivity implements BluetoothServiceCa
         goMapButton.setOnClickListener(this);
         getLifecycle().addObserver(new BeaconLifecycle(this));
         beaconViewModal = ViewModelProviders.of(this).get(BeaconViewModal.class);
-        LiveData<List<BeaconRoom>> beaconData = beaconViewModal.getBeacon();
-        beaconData.observe(this, new Observer<List<BeaconRoom>>() {
+        LiveData<List<Beacon>> beaconData = beaconViewModal.getBeacon();
+        beaconData.observe(this, new Observer<List<Beacon>>() {
             @Override
-            public void onChanged(@Nullable List<BeaconRoom> beacons) {
-                beaconList.clear();
-                for (BeaconRoom beaconRoom : beacons){
-                    beaconList.add(new Beacon(beaconRoom.getName(),beaconRoom.getUUID(),beaconRoom.getRssi(),new PointF(beaconRoom.getCoordinate_X(),beaconRoom.getCoordinate_Y())));
+            public void onChanged(@Nullable List<Beacon> beacons) {
+                map.setPointFS(beacons);
+                assert beacons != null;
+                for(Beacon beacon : beacons){
+                    if (beacon.getY() !=null && beacon.getX() !=null) {
+                        beacon1 = new Beacon(beacon.getName(), beacon.getUUID(), beacon.getRssi(), beacon.getX(), beacon.getY(), Trilateration.distance(beacon.getRssi()));
+                        user = Trilateration.getCoordinateUser(beacon1);
+                        if (user!=null){
+                            map.setCordinateUser(user);
+                        }
+                    }
                 }
-                map.setPointFS(beaconList);
             }
         });
-
     }
 
     @Override
     public void onClick(View view) {
         Intent goMapActivity = new Intent(this,MainActivity.class);
+        goMapActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(goMapActivity);
     }
 
     @Override
     public void onReceivingBeacon(Beacon beacon, boolean flagBluetoothEnable) {
-        Log.d("MainActivity", "1   ");
+        beaconViewModal.addBeacon(beacon);
+        //Log.d("MainActivity", "2   ");
     }
 }

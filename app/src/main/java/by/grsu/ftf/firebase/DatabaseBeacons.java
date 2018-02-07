@@ -8,7 +8,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DatabaseBeacons {
@@ -38,13 +37,15 @@ public class DatabaseBeacons {
         });
     }
 
-    public PointF getCoordinatesBeacon(String nameBeacon) {
+    public Float getCoordinatesBeaconX(String nameBeacon) {
         if(coordinatesBeacon.size()!=0 && coordinatesBeacon.containsKey(nameBeacon))
-        return coordinatesBeacon.get(nameBeacon);
-        else return new PointF(0,0);
+        return coordinatesBeacon.get(nameBeacon).x;
+        else return null;
     }
 
-    public ArrayList<PointF> getCoordiate() {
-        return new ArrayList<>(coordinatesBeacon.values());
+    public Float getCoordinatesBeaconY(String nameBeacon) {
+        if(coordinatesBeacon.size()!=0 && coordinatesBeacon.containsKey(nameBeacon))
+            return coordinatesBeacon.get(nameBeacon).y;
+        else return null;
     }
 }

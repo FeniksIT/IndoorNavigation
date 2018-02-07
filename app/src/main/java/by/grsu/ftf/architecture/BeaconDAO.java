@@ -2,24 +2,25 @@ package by.grsu.ftf.architecture;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
 import java.util.List;
 
+import by.grsu.ftf.beacon.Beacon;
+
 @Dao
 public interface BeaconDAO {
     @Insert
-    long insertBeacon(BeaconRoom beaconRoom);
-    @Query("UPDATE beaconRoom SET rssi = :rssi, coordinate_X = :coordinate_X, coordinate_Y = :coordinate_Y  WHERE name = :name")
-    void updateBeacon(int rssi, String name, float coordinate_X, float coordinate_Y);
-    @Delete
-    void deleteBeacon(BeaconRoom beaconRoom);
-    @Query("select * from beaconRoom")
-    LiveData<List<BeaconRoom>> gerBeacons();
-    @Query("delete from beaconRoom")
+    void insertBeacon(Beacon beacon);
+    @Query("UPDATE beacon SET rssi = :rssi, X = :coordinate_X, Y = :coordinate_Y  WHERE name = :name")
+    void updateBeacon(int rssi, String name, Float coordinate_X, Float coordinate_Y);
+    @Query("delete from beacon where name = :name")
+    void deleteBeacon(String name);
+    @Query("select * from beacon")
+    LiveData<List<Beacon>> gerBeacons();
+    @Query("delete from beacon")
     void deleteALL();
-    @Query("select * from beaconRoom")
-    List<BeaconRoom> gerAll();
+    @Query("select * from beacon")
+    List<Beacon> gerAll();
 }
