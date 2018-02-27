@@ -1,7 +1,6 @@
 package by.grsu.ftf.beacon;
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -16,7 +15,6 @@ public class Beacon implements Parcelable {
     private int rssi;
     private Float X;
     private Float Y;
-    @Ignore
     private Float distance;
 
     public Beacon(){

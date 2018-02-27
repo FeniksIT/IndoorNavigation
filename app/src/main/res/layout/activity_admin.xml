@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="by.grsu.ftf.activity.AdminActivity">
+
+    <TextView
+        android:id="@+id/textID"
+        android:layout_width="100dp"
+        android:layout_height="25dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="15sp"
+        android:layout_marginLeft="12dp"
+        android:text="Name" />
+
+    <TextView
+        android:id="@+id/TextMetr0"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textID"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="12dp"
+        android:text="С базы" />
+
+    <TextView
+        android:id="@+id/TextMetr1"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/TextMetr0"
+        android:layout_marginTop="14dp"
+        android:layout_marginLeft="12dp"
+        android:text="Собранное" />
+
+    <ListView
+        android:id="@+id/List"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_alignParentBottom="true"/>
+
+    <Button
+        android:id="@+id/ButtonSave"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_alignBaseline="@+id/Button9"
+        android:layout_alignBottom="@+id/Button9"
+        android:layout_marginStart="68dp"
+        android:layout_toEndOf="@+id/Button9"
+        android:text="Сохранить" />
+
+    <Button
+        android:id="@+id/Button9"
+        android:layout_width="120dp"
+        android:layout_height="50dp"
+        android:layout_above="@+id/List"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="17dp"
+        android:layout_marginStart="44dp"
+        android:text="Собрать" />
+</RelativeLayout>

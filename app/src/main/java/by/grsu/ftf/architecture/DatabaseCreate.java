@@ -12,7 +12,7 @@ class DatabaseCreate {
         if(beaconDatabase==null){
             synchronized (OBJECT){
                 if(beaconDatabase==null){
-                    beaconDatabase = Room.databaseBuilder(context,BeaconDatabase.class,"Beacon6").allowMainThreadQueries().build();
+                    beaconDatabase = Room.databaseBuilder(context,BeaconDatabase.class,"Beacon8").allowMainThreadQueries().build();
                 }
             }
         }

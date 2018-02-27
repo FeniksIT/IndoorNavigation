@@ -8,13 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import by.grsu.ftf.beacon.Beacon;
-import by.grsu.ftf.maths.BeaconUtility;
 
 public class Trilateration {
 
     public static HashMap<String, Beacon> beaconHashMap = new HashMap<>();
 
-    public static PointF getCoordinateUser(Beacon beacon){
+    public PointF getCoordinateUser(Beacon beacon){
         beaconHashMap.put(beacon.getName(),beacon);
         if(beaconHashMap.size()==3){
             List<Beacon> beaconList = new ArrayList<>(beaconHashMap.values());
@@ -26,12 +25,11 @@ public class Trilateration {
         }
     }
 
-    public static Float distance(float rssi){
-        float d = (float) Math.pow(10, (rssi - BeaconUtility.POWER) / ((float) -10 * 3.2));
-        return d;
+    public Float distance(float rssi){
+        return (float) Math.pow(10,(-60f-rssi)/(10*3));
     }
 
-    public static PointF trilaterate(Float ax, Float ay, Float bx, Float by, Float cx, Float cy, float distA, float distB, float distC) {
+    public PointF trilaterate(Float ax, Float ay, Float bx, Float by, Float cx, Float cy, float distA, float distB, float distC) {
         float P1[] = {ax, ay, 0};
         float P2[] = {bx, by, 0};
         float P3[] = {cx, cy, 0};

@@ -22,6 +22,7 @@ public class MapView extends View{
     private PointF user = new PointF(0,0);
     private Drawable drawable;
     private List<Beacon> beacons = new ArrayList<>();
+    private List<Float> setings = new ArrayList<>();
 
     public MapView(Context context) {
         this(context,null);
@@ -41,17 +42,20 @@ public class MapView extends View{
         drawable.draw(canvas);
         paint.setColor(Color.RED);
         for (Beacon beacon:beacons){
-            if (beacon.getY() !=null) {
-                canvas.drawCircle(x * beacon.getX(), y * beacon.getY(), x / 100, paint);
-                canvas.drawText(beacon.getName(), x * beacon.getX()+x / 100, y * beacon.getY()+y / 100, paint);
+            if (beacon.getY() !=null && beacon.getX()!=null && setings.size()>1) {
+                canvas.drawCircle(x*Math.abs((beacon.getX()*(-1))/setings.get(0)), y*Math.abs((beacon.getY()*(-1))/setings.get(1)), x / 100, paint);
+                canvas.drawText(beacon.getName() + "   " + beacon.getDistance(), x*Math.abs((beacon.getX()*(-1))/setings.get(0))+x / 100, y*Math.abs((beacon.getY()*(-1))/setings.get(1))+y / 100, paint);
             }
         }
         paint.setColor(Color.GREEN);
-        canvas.drawCircle(x*user.x, y*user.y, x/70, paint);
+        if (setings.size()>1) {
+            canvas.drawCircle(x * Math.abs((user.x * (-1)) / setings.get(0)), y * Math.abs((user.y * (-1)) / setings.get(1)), x / 70, paint);
+        }
     }
 
-    public void setPointFS(List<Beacon> beacons) {
+    public void setPointFS(List<Beacon> beacons, List<Float> setings) {
         this.beacons = beacons;
+        this.setings = setings;
         invalidate();
     }
 

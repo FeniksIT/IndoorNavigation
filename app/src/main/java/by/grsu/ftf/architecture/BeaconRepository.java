@@ -16,29 +16,36 @@ import by.grsu.ftf.beacon.Beacon;
 import by.grsu.ftf.firebase.DatabaseBeacons;
 import by.grsu.ftf.maths.BeaconController;
 import by.grsu.ftf.maths.DeleteBeaconCallbacks;
+import by.grsu.ftf.navigation.Trilateration;
 
 public class BeaconRepository implements DeleteBeaconCallbacks{
 
     private final BeaconDAO beaconDAO;
     private BeaconController beaconController;
     private DatabaseBeacons databaseBeacons = new DatabaseBeacons();
+    private Trilateration trilateration = new Trilateration();
     private Context context;
 
     BeaconRepository(Context context){
         beaconDAO = DatabaseCreate.getBeaconDatabase(context).BeaconDatabase();
         databaseBeacons.getBeacondForDataBase();
+        databaseBeacons.getSetingForDataBase();
         this.context=context;
         HashMap<String, String> beaconList = readFromSP();
-        beaconController = new BeaconController(beaconDAO.gerAll(),beaconList,this);
+        if (beaconList == null){
+            beaconController = new BeaconController();
+        }else {
+            beaconController = new BeaconController(beaconDAO.gerAll(), beaconList, this);
+        }
     }
 
     void addBeacon(Beacon beacon){
         Float x = databaseBeacons.getCoordinatesBeaconX(beacon.getName());
         Float y = databaseBeacons.getCoordinatesBeaconY(beacon.getName());
         if(beaconController.addBeacon(beacon)){
-            beaconDAO.updateBeacon(beacon.getRssi(),beacon.getName(),x,y);
+            beaconDAO.updateBeacon(beacon.getRssi(),beacon.getName(),x,y, trilateration.distance(beacon.getRssi()));
         }else{
-            beaconDAO.insertBeacon(new Beacon(beacon.getName(),beacon.getUUID(),beacon.getRssi(),x,y));
+            beaconDAO.insertBeacon(new Beacon(beacon.getName(),beacon.getUUID(),beacon.getRssi(),beacon.getX(),beacon.getY(), trilateration.distance(beacon.getRssi())));
         }
         insertToSP(beaconController.getDateReceiving());
     }
@@ -50,10 +57,6 @@ public class BeaconRepository implements DeleteBeaconCallbacks{
 
     LiveData<List<Beacon>> getBeacons(){
         return beaconDAO.gerBeacons();
-    }
-
-    void deleteALL(){
-        beaconDAO.deleteALL();
     }
 
     private void insertToSP(Map<String, String> jsonMap) {
@@ -71,5 +74,9 @@ public class BeaconRepository implements DeleteBeaconCallbacks{
         String json = prefs.getString("HashMap","");
         java.lang.reflect.Type type = new TypeToken<HashMap<String, String>>(){}.getType();
         return gson.fromJson(json, type);
+    }
+
+    public List<Float> getSetings(){
+        return databaseBeacons.getSetings();
     }
 }

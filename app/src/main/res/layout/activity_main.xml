@@ -4,11 +4,24 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="by.grsu.ftf.activity.MainActivity">
+
     <Button
-        android:text="Map"
         android:id="@+id/goMap"
-        android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/BeaconListViwe"
+        android:layout_marginStart="12dp"
+        android:text="Map" />
+
+    <Button
+        android:id="@+id/goAdmin"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_alignEnd="@+id/BeaconListViwe"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="16dp"
+        android:text="Admin" />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

@@ -20,7 +20,7 @@ import by.grsu.ftf.beacon.Beacon;
 import by.grsu.ftf.bluetooth.BluetoothServiceCallbacks;
 import by.grsu.ftf.maths.AdapterBeacon;
 
-public class MainActivity extends AppCompatActivity implements BluetoothServiceCallbacks, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements BluetoothServiceCallbacks {
 
     private AdapterBeacon adapter = new AdapterBeacon();
     private BeaconViewModal beaconViewModal;
@@ -32,7 +32,9 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
         setContentView(R.layout.activity_main);
         ListView beaconListView = (ListView) findViewById(R.id.BeaconListViwe);
         Button goMapButton = (Button) findViewById(R.id.goMap);
-        goMapButton.setOnClickListener(this);
+        goMapButton.setOnClickListener(onClickListenerMap);
+        Button goAdminButton = (Button) findViewById(R.id.goAdmin);
+        goAdminButton.setOnClickListener(getOnClickListenerAdmin);
         getLifecycle().addObserver(beaconLifecycle);
         beaconViewModal = ViewModelProviders.of(this).get(BeaconViewModal.class);
         LiveData<List<Beacon>> beaconData = beaconViewModal.getBeacon();
@@ -46,16 +48,26 @@ public class MainActivity extends AppCompatActivity implements BluetoothServiceC
         beaconListView.setAdapter(adapter);
     }
 
-    @Override
-    public void onClick(View view) {
-        Intent goMapActivity = new Intent(this,MapActivity.class);
-        goMapActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(goMapActivity);
-    }
+    public View.OnClickListener onClickListenerMap = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent goMapActivity = new Intent(MainActivity.this,MapActivity.class);
+            goMapActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(goMapActivity);
+        }
+    };
+
+    public View.OnClickListener getOnClickListenerAdmin = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            Intent intent = new Intent(MainActivity.this,AdminActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+    };
 
     @Override
     public void onReceivingBeacon(Beacon beacon, boolean flagBluetoothEnable){
          beaconViewModal.addBeacon(beacon);
-        //Log.d("MainActivity", "1   ");
     }
 }

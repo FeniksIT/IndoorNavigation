@@ -31,4 +31,8 @@ public class BeaconViewModal extends AndroidViewModel {
         beaconRepository.addBeacon(beacon);
         getBeacon();
     }
+
+    public List<Float> getSetings(){
+        return beaconRepository.getSetings();
+    }
 }
