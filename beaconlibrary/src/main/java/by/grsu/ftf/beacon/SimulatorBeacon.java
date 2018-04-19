@@ -1,7 +1,5 @@
 package by.grsu.ftf.beacon;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 public class SimulatorBeacon {
@@ -23,7 +21,7 @@ public class SimulatorBeacon {
         int  numberBeacon = random.nextInt(kolBeacon)+1;
         String id = "id"+numberBeacon;
         String UUID = "Beacon " + numberBeacon;
-        int rssi = random.nextInt(30) - 80;
+        int rssi = random.nextInt(30) - 40;
         return new Beacon(id,UUID,rssi);
     }
 }

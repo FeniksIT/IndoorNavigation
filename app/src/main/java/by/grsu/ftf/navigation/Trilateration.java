@@ -1,11 +1,12 @@
 package by.grsu.ftf.navigation;
 
 import android.graphics.PointF;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import by.grsu.ftf.beacon.Beacon;
 
@@ -25,8 +26,52 @@ public class Trilateration {
         }
     }
 
-    public Float distance(float rssi){
-        return (float) Math.pow(10,(-60f-rssi)/(10*3));
+    public Float distance(String name, float rssi,float x, float y, HashMap<String, Integer> integerHashMap, HashMap<String, PointF> coordinates){
+        HashMap<Integer, Float> stringFloatHashMap = new HashMap<>();
+        TreeMap<Integer, Float> floatTreeMap;
+        int k=0;
+        int q=0;
+        int r = 0;
+        float l = 0f;
+        boolean f = false;
+        for(Map.Entry<String, Integer> entry : integerHashMap.entrySet()){
+            if(coordinates.get(entry.getKey())!=null) stringFloatHashMap.put(entry.getValue(),getDistancePoint(new PointF(x,y),coordinates.get(entry.getKey())));
+        }
+        floatTreeMap = new TreeMap<>(stringFloatHashMap);
+        //Log.d("MainActivity", "!!!!!)))))))))))))((((((   " + floatTreeMap + "-------------" + name);
+        //Log.d("MainActivity", "!!!!!)))))))))))))((((((   " + stringFloatHashMap + "===========" + name);
+        for(Map.Entry<Integer, Float> entry : stringFloatHashMap.entrySet()){
+            k++;
+            if (k == 1){
+                r = entry.getKey();
+                l = entry.getValue();
+            }
+            if (k % 2 == 0) {
+                if (entry.getKey()>rssi && q<rssi){
+                    f = true;
+                    if(entry.getValue()>0) {
+                        r = entry.getKey();
+                        l = entry.getValue();
+                    }else{
+                        r = q;
+                        l = stringFloatHashMap.get(q);
+                    }
+                    break;
+                }
+            } else {
+                q = entry.getKey();
+            }
+        }
+        //Log.d("MainActivity", "!!!!!)))))))"+ r + "))))))((((((   " + l + "-------------" + rssi);
+        //if (!f && ){
+            return (l*rssi)/r;
+       // }
+       // else return (l*rssi)/r;
+        //return (float) Math.pow(10,(-60f-rssi)/(10*3));
+    }
+
+    private Float getDistancePoint(PointF a, PointF b) {
+        return (float) Math.sqrt( Math.pow(a.x-b.x, 2) + Math.pow(a.y-b.y, 2) );
     }
 
     public PointF trilaterate(Float ax, Float ay, Float bx, Float by, Float cx, Float cy, float distA, float distB, float distC) {
@@ -76,7 +121,7 @@ public class Trilateration {
         float lat = triPt[1];
 
         if (Float.isNaN(lon) && Float.isNaN(lat)) return null;
-        Log.d("MainActivity", "2   " + lon);
+        //Log.d("MainActivity", "2   " + lon);
         return new PointF(lon, lat);
 
     }

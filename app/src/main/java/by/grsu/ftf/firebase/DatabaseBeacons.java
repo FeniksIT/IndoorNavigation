@@ -1,14 +1,28 @@
 package by.grsu.ftf.firebase;
 
+import android.graphics.Picture;
 import android.graphics.PointF;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.larvalabs.svgandroid.SVG;
+import com.larvalabs.svgandroid.SVGParser;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -21,6 +35,9 @@ public class DatabaseBeacons {
     private List<Float> setings = new ArrayList<>();
     //private HashMap<String, List<String>> stringlistHashMap = new HashMap<>();
     private HashMap<String, HashMap<String, Integer>> stringHashMapHashMap = new HashMap<>();
+    private Picture picture;
+    SVG svg;
+    InputStream inputStream;
 
     public DatabaseBeacons(){
         database = FirebaseDatabase.getInstance();
@@ -95,6 +112,12 @@ public class DatabaseBeacons {
         else return null;
     }
 
+    public HashMap<String, PointF> getCoordinates() {
+        if(coordinatesBeacon.size()!=0)
+            return coordinatesBeacon;
+        else return null;
+    }
+
     public List<Float> getSetings(){
         return setings;
     }
@@ -104,7 +127,37 @@ public class DatabaseBeacons {
     } */
 
     public HashMap<String, Integer> getRSSIMert(String name){
-        return stringHashMapHashMap.get(name);
+        if(stringHashMapHashMap.size()!=0 && stringHashMapHashMap.containsKey(name))
+            return stringHashMapHashMap.get(name);
+        else return null;
+    }
+
+    public Picture getSVG() {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference ref = storage.getReference().child("Maps/method-draw-image.svg");
+        try {
+            final File localFile = File.createTempFile("Images", "svg");
+            ref.getFile(localFile).addOnSuccessListener(new OnSuccessListener< FileDownloadTask.TaskSnapshot >() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    try {
+                        inputStream = new FileInputStream(localFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    svg = SVGParser.getSVGFromInputStream(inputStream);
+                    picture = svg.getPicture();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return picture;
     }
 
 }

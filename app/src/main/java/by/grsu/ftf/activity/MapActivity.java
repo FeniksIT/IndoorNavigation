@@ -25,7 +25,6 @@ public class MapActivity extends AppCompatActivity implements BluetoothServiceCa
     private MapView map;
     private BeaconViewModal beaconViewModal;
     private Trilateration trilateration = new Trilateration();
-    private Beacon beacon1;
     private PointF user;
 
     @Override
@@ -43,7 +42,7 @@ public class MapActivity extends AppCompatActivity implements BluetoothServiceCa
             public void onChanged(@Nullable List<Beacon> beacons) {
                 assert beacons != null;
                 for(Beacon beacon : beacons){
-                    if (beacon.getY() !=null && beacon.getX() !=null) {
+                    if (beacon.getY() !=null && beacon.getX() !=null && beaconViewModal.getSetings().size()>1) {
                         user = trilateration.getCoordinateUser(beacon);
                         if (user!=null){
                             map.setCordinateUser(user);
@@ -51,6 +50,7 @@ public class MapActivity extends AppCompatActivity implements BluetoothServiceCa
                     }
                 }
                 map.setPointFS(beacons,beaconViewModal.getSetings());
+                map.setSvgPicture(beaconViewModal.getXML());
             }
         });
     }

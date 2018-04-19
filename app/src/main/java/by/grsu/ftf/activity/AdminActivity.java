@@ -135,18 +135,13 @@ public class AdminActivity extends AppCompatActivity implements BluetoothService
                 stroka = "";
                 String s = "";
                 int ID = 0;
-                for(List<Integer> integers:stringListHashMap.values()){
+                for(Map.Entry<String, List<Integer>> entry : stringListHashMap.entrySet()){
                     int summa = 0;
                     ID++;
-                    for(Integer integer:integers){
+                    for(Integer integer:entry.getValue()){
                         summa = summa + integer;
                     }
-                    for(Map.Entry<String, List<Integer>> entry : stringListHashMap.entrySet()){
-                        if (integers.equals(entry.getValue())) {
-                            s = entry.getKey();
-                        }
-                    }
-                    stroka = stroka + s + " " + String.valueOf(summa/integers.size()) + " ";
+                    stroka = stroka + entry.getKey() + " " + String.valueOf(summa/entry.getValue().size()) + " ";
                 }
                 flag = false;
                 listView.setVisibility(View.VISIBLE);

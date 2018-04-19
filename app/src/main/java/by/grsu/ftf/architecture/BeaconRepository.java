@@ -3,6 +3,7 @@ package by.grsu.ftf.architecture;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Picture;
 import android.preference.PreferenceManager;
 
 import com.google.gson.Gson;
@@ -43,9 +44,9 @@ public class BeaconRepository implements DeleteBeaconCallbacks{
         Float x = databaseBeacons.getCoordinatesBeaconX(beacon.getName());
         Float y = databaseBeacons.getCoordinatesBeaconY(beacon.getName());
         if(beaconController.addBeacon(beacon)){
-            beaconDAO.updateBeacon(beacon.getRssi(),beacon.getName(),x,y, trilateration.distance(beacon.getRssi()));
+            if(databaseBeacons.getRSSIMert(beacon.getName())!=null && databaseBeacons.getCoordinates()!=null && databaseBeacons.getCoordinatesBeaconX(beacon.getName())!=null) beaconDAO.updateBeacon(beacon.getRssi(),beacon.getName(),x,y, trilateration.distance(beacon.getName(),beacon.getRssi(),x,y,databaseBeacons.getRSSIMert(beacon.getName()),databaseBeacons.getCoordinates()));
         }else{
-            beaconDAO.insertBeacon(new Beacon(beacon.getName(),beacon.getUUID(),beacon.getRssi(),beacon.getX(),beacon.getY(), trilateration.distance(beacon.getRssi())));
+            if(databaseBeacons.getRSSIMert(beacon.getName())!=null && databaseBeacons.getCoordinates()!=null && databaseBeacons.getCoordinatesBeaconX(beacon.getName())!=null) beaconDAO.insertBeacon(new Beacon(beacon.getName(),beacon.getUUID(),beacon.getRssi(),beacon.getX(),beacon.getY(), trilateration.distance(beacon.getName(),beacon.getRssi(), x,y,databaseBeacons.getRSSIMert(beacon.getName()),databaseBeacons.getCoordinates())));
         }
         insertToSP(beaconController.getDateReceiving());
     }
@@ -78,5 +79,9 @@ public class BeaconRepository implements DeleteBeaconCallbacks{
 
     public List<Float> getSetings(){
         return databaseBeacons.getSetings();
+    }
+
+    public Picture getXML(){
+        return databaseBeacons.getSVG();
     }
 }

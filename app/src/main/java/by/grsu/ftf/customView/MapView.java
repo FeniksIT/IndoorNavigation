@@ -1,10 +1,13 @@
 package by.grsu.ftf.customView;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -13,7 +16,6 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
-import by.grsu.ftf.activity.R;
 import by.grsu.ftf.beacon.Beacon;
 
 public class MapView extends View{
@@ -23,6 +25,11 @@ public class MapView extends View{
     private Drawable drawable;
     private List<Beacon> beacons = new ArrayList<>();
     private List<Float> setings = new ArrayList<>();
+    private Boolean flagTouch = false;
+    private float XX = 0;
+    private float YY = 0;
+    private Picture picture;
+    private Rect rect;
 
     public MapView(Context context) {
         this(context,null);
@@ -30,16 +37,18 @@ public class MapView extends View{
 
     public MapView(Context context,@Nullable AttributeSet attrs) {
         super(context,attrs);
-        drawable = getResources().getDrawable(R.drawable.ic_map);
     }
 
+    @SuppressLint("DrawAllocation")
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         int x = this.getMeasuredWidth();
         int y = this.getMeasuredHeight();
-        drawable.setBounds(0,0,x,y);
-        drawable.draw(canvas);
+        if (picture!=null){
+            rect = new Rect(0,0,x,y);
+            canvas.drawPicture(picture,rect);
+        }
         paint.setColor(Color.RED);
         for (Beacon beacon:beacons){
             if (beacon.getY() !=null && beacon.getX()!=null && setings.size()>1) {
@@ -51,6 +60,7 @@ public class MapView extends View{
         if (setings.size()>1) {
             canvas.drawCircle(x * Math.abs((user.x * (-1)) / setings.get(0)), y * Math.abs((user.y * (-1)) / setings.get(1)), x / 70, paint);
         }
+        canvas.drawText( flagTouch.toString() + "X= " + XX + "Y= " + YY, x/2, y/2, paint);
     }
 
     public void setPointFS(List<Beacon> beacons, List<Float> setings) {
@@ -61,6 +71,11 @@ public class MapView extends View{
 
     public void setCordinateUser(PointF user){
         this.user = user;
+        invalidate();
+    }
+
+    public void setSvgPicture(Picture picture){
+        this.picture = picture;
         invalidate();
     }
 

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.graphics.Picture;
 import android.support.annotation.NonNull;
 
 import java.util.List;
@@ -34,5 +35,9 @@ public class BeaconViewModal extends AndroidViewModel {
 
     public List<Float> getSetings(){
         return beaconRepository.getSetings();
+    }
+
+    public Picture getXML(){
+        return  beaconRepository.getXML();
     }
 }
